@@ -4,7 +4,7 @@ class CardVisual extends Thread {
     public Card card;
     public boolean isReversed = true;
     public int x, y, destinationX, destinationY;
-    private int animationLength = 75;
+    private int animationLength = 100;
     private Component parent;
 
     public CardVisual(Card card, int x, int y, Component parent){
@@ -28,7 +28,7 @@ class CardVisual extends Thread {
     public void run() {
         double xDistance = destinationX - x;
         double yDistance = destinationY - y;
-        int frameTime = 4;
+        int frameTime = 8;
         double speedX = (xDistance / animationLength) * frameTime;
         double speedY = (yDistance / animationLength) * frameTime;
 

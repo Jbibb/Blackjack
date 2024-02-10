@@ -9,7 +9,7 @@ public class CardPanel extends JPanel {
     private ArrayList<Card> playerHand = new ArrayList<>();
     private Window parent;
     private int deckIndex = 0;
-    private int waitTimeBetweenDealerActions = 400;
+    private int waitTimeBetweenDealerActions = 450;
 
     private AudioPlayer audioPlayer = new AudioPlayer("flipcard.wav");
     public CardPanel(Card[] deck, Window parent){
@@ -298,6 +298,8 @@ public class CardPanel extends JPanel {
     public void scale(){
         cardWidth = parent.getWidth() / 8;
         cardHeight = parent.getHeight() / 4;
+
+        ImageHandler.scaleImages(cardWidth, cardHeight);
     }
 
     @Override
