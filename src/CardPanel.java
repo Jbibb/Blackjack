@@ -200,7 +200,7 @@ public class CardPanel extends JPanel {
                 parent.setDealResult(playerScore, 0, false, false);
             } else {
 
-                cardVisuals.get(0).reverse();
+                cardVisuals.get(3).reverse();
 
                 try {
                     Thread.sleep(750);
@@ -256,6 +256,9 @@ public class CardPanel extends JPanel {
         if(dealerHand.size() == 2 && dealerHasAce && dealerHas10PointCard) {
             dealerHasBlackJack = true;
             dealerScore = 21;
+        } else if(dealerHand.size() == 2 && maxValueAces == 2) {
+            dealerHasBlackJack = true;
+            dealerScore = 21;
         }
         while (dealerScore > 21 && maxValueAces > 0) {
             dealerScore -= 9;
@@ -288,8 +291,10 @@ public class CardPanel extends JPanel {
         if(playerHand.size() == 2 && playerHasAce && playerHas10PointCard) {
             playerHasBlackJack = true;
             playerScore = 21;
-        }
-        while (playerScore > 21 && maxValueAces > 0) {
+        } else if(playerHand.size() == 2 && maxValueAces == 2) {
+            playerHasBlackJack = true;
+            playerScore = 21;
+        } while (playerScore > 21 && maxValueAces > 0) {
             playerScore -= 9;
             maxValueAces--;
         }
