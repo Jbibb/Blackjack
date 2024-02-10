@@ -307,7 +307,6 @@ public class CardPanel extends JPanel {
         super.paintComponent(g);
 
         Image deck = ImageHandler.getImage("Back");
-        deck = deck.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
         g.drawImage(deck, this.getWidth() - (int)(cardWidth * 1.5) - cardWidth / 2, this.getHeight()/6 - cardHeight/2, null);
 
         Image cardImage;

@@ -178,7 +178,6 @@ public class Window extends JFrame implements Runnable {
 
     private JTextField resultField;
     public void setDealResult(int playerScore, int dealerScore, boolean playerHasBlackJack, boolean dealerHasBlackJack){
-        System.out.println("Player: " + playerScore + " Player BlackJack: " + playerHasBlackJack + "\nDealer: " + dealerScore + " Dealer BlackJack: " + dealerHasBlackJack);
         String labelMessage;
         Color labelColor;
         if(playerHasBlackJack) {

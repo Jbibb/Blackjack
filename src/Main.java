@@ -1,14 +1,12 @@
 import javax.swing.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 enum Suits {
     Clubs('\u2667', 0), Diamonds('\u2666', 1), Hearts('\u2661', 2), Spades('\u2660', 3);
     public final char label;
     public final int value;
-    private Suits(char label, int value) {
+    Suits(char label, int value) {
         this.label = label;
         this.value = value;
     }
@@ -18,7 +16,7 @@ enum Values {
     Eight("8", 6), Nine("9", 7), Ten("10", 8), Jack("J", 9), Queen("Q", 10), King("K", 11), Ace("A", 12);
     public final String label;
     public final int value;
-    private Values(String label, int value) {
+    Values(String label, int value) {
         this.label = label;
         this.value = value;
     }
@@ -67,11 +65,12 @@ public class Main {
                     deck[i++] = new Card(s, v);
         Card tmp = null;
         int randomIndex;
-        for(int j = 0; j < deck.length; j++) {
-            tmp = deck[j];
-            randomIndex = (int) (Math.random() * (52 * 6));
-            deck[j] = deck[randomIndex];
-            deck[randomIndex] = tmp;
+        Random rnd = new Random();
+        for (i = deck.length - 1; i > 0; i--) {
+            int index = rnd.nextInt(i + 1);
+            tmp = deck[index];
+            deck[index] = deck[i];
+            deck[i] = tmp;
         }
 
         return deck;

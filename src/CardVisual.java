@@ -28,7 +28,7 @@ class CardVisual extends Thread {
     public void run() {
         double xDistance = destinationX - x;
         double yDistance = destinationY - y;
-        int frameTime = 8;
+        int frameTime = 16;
         double speedX = (xDistance / animationLength) * frameTime;
         double speedY = (yDistance / animationLength) * frameTime;
 
