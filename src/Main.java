@@ -55,7 +55,7 @@ public class Main {
         AudioPlayer audioPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
         audioPlayer.play();
 
-        SwingUtilities.invokeLater(new Window(getDeck()));
+        SwingUtilities.invokeLater(new Window(getDeck(), audioPlayer));
     }
 
     public static Card[] getDeck(){

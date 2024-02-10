@@ -4,7 +4,7 @@ class CardVisual extends Thread {
     public Card card;
     public boolean isReversed = true;
     public int x, y, destinationX, destinationY;
-    private int animationLength = 150;
+    private int animationLength = 75;
     private Component parent;
 
     public CardVisual(Card card, int x, int y, Component parent){
@@ -28,11 +28,11 @@ class CardVisual extends Thread {
     public void run() {
         double xDistance = destinationX - x;
         double yDistance = destinationY - y;
-        int frameTime = 8;
+        int frameTime = 4;
         double speedX = (xDistance / animationLength) * frameTime;
         double speedY = (yDistance / animationLength) * frameTime;
 
-        while (x != destinationX || y != destinationY) { // Change to || for stopping condition
+        while (x != destinationX || y != destinationY) {
             try {
                 Thread.sleep(frameTime);
             } catch (InterruptedException e) {

@@ -11,14 +11,17 @@ public class Window extends JFrame implements Runnable {
     private JButton dealButton, doubleButton;
     private JPanel betPanel;
     private JPanel pageStartPanel;
-    private JTextField moneyField;
+    private JTextField moneyField, betField, balanceField;
     private JSpinner betSpinner;
+    private int balance = 0;
     private int money = 5_000;
     private boolean doubleDown = false;
-    private boolean playerHasHit = false; //(so he can't double down)
-    private int currentBet;
-    public Window(Card[] deck){
+    private boolean playerHasHit = false;
+    private int currentBet = 0;
+    private AudioPlayer audioPlayer;
+    public Window(Card[] deck, AudioPlayer audioPlayer){
         this.deck = deck;
+        this.audioPlayer = audioPlayer;
     }
 
     @Override
@@ -31,18 +34,36 @@ public class Window extends JFrame implements Runnable {
         moneyField = new JTextField();
         moneyField.setBorder(BorderFactory.createEmptyBorder());
         moneyField.setEditable(false);
-        moneyField.setText("$" + String.valueOf(money));
-        moneyField.setFont(new Font("Arial", 3, 22));
+        moneyField.setText("$" + money);
+        moneyField.setFont(new Font("Arial", Font.BOLD, 22));
         moneyField.setForeground(Color.YELLOW);
         moneyField.setBackground(new Color(20, 100, 20));
+
+        betField = new JTextField();
+        betField.setBorder(BorderFactory.createEmptyBorder());
+        betField.setEditable(false);
+        betField.setText(" Current bet: $" + currentBet);
+        betField.setFont(new Font("Arial", 3, 16));
+        betField.setForeground(Color.ORANGE);
+        betField.setBackground(new Color(20, 100, 20));
+
+        balanceField = new JTextField();
+        balanceField.setBorder(BorderFactory.createEmptyBorder());
+        balanceField.setEditable(false);
+        balanceField.setText(" Balance: " + balance + "$\t\t");
+        balanceField.setFont(new Font("Arial", 3, 16));
+        balanceField.setForeground(Color.YELLOW);
+        balanceField.setBackground(new Color(20, 100, 20));
 
         betPanel = new JPanel();
         betPanel.setLayout(new FlowLayout());
 
-        betSpinner = new JSpinner(new SpinnerNumberModel(50, 50, 1_000, 50));
+        betSpinner = new JSpinner(new SpinnerNumberModel(50, 50, 5_000, 50));
         betPanel.add(betSpinner);
 
         pageStartPanel.add(moneyField);
+        pageStartPanel.add(betField);
+        pageStartPanel.add(balanceField);
 
         this.cardPanel = new CardPanel(deck, this);
         cardPanel.setBackground(new Color(20, 100, 20));
@@ -63,6 +84,9 @@ public class Window extends JFrame implements Runnable {
 
                     moneyField.setText("$" + money);
                     moneyField.revalidate();
+
+                    betField.setText(" Current bet: $" + currentBet);
+                    betField.revalidate();
 
                     betSpinner.setVisible(false);
                     betSpinner.getParent().revalidate();
@@ -106,6 +130,11 @@ public class Window extends JFrame implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 if(money >= currentBet && !playerHasHit) {
                     money -= currentBet;
+                    moneyField.setText("$" + money);
+
+                    betField.setText(" Current bet: $" + 2*currentBet);
+                    betField.revalidate();
+
                     doubleDown = true;
                     buttonPanel.setVisible(false);
                     cardPanel.doubleDown();
@@ -151,28 +180,46 @@ public class Window extends JFrame implements Runnable {
     public void setDealResult(int playerScore, int dealerScore, boolean playerHasBlackJack, boolean dealerHasBlackJack){
         System.out.println("Player: " + playerScore + " Player BlackJack: " + playerHasBlackJack + "\nDealer: " + dealerScore + " Dealer BlackJack: " + dealerHasBlackJack);
         String labelMessage;
+        Color labelColor;
         if(playerHasBlackJack) {
             labelMessage = "Player Wins!";
+            labelColor = Color.GREEN;
             money += (int) (currentBet * 1.5d);
+            balance += (int)(currentBet * 0.5d);
         } else if(dealerScore > 21) {
             labelMessage = "Dealer Bust!";
+            labelColor = Color.GREEN;
             money += doubleDown ? currentBet * 4 : currentBet * 2;
-        } else if (playerScore > 21)
+            balance += doubleDown ? currentBet * 2 : currentBet;
+        } else if (playerScore > 21) {
             labelMessage = "Player Bust!";
-        else if(playerScore > dealerScore) {
+            labelColor = Color.RED;
+            balance -= doubleDown ? currentBet * 2 : currentBet;;
+        } else if(playerScore > dealerScore) {
             labelMessage = "Player Wins!";
+            labelColor = Color.GREEN;
             money += doubleDown ? currentBet * 4 : currentBet * 2;
+            balance += doubleDown ? currentBet * 2 : currentBet;
         } else if(playerScore == dealerScore) {
             if (playerHasBlackJack && !dealerHasBlackJack) {
                 labelMessage = "Player Wins!";
+                labelColor = Color.GREEN;
                 money += doubleDown ? currentBet * 4 : currentBet * 2;
-            } else if (!playerHasBlackJack && dealerHasBlackJack)
+                balance += doubleDown ? currentBet * 2 : currentBet;
+            } else if (!playerHasBlackJack && dealerHasBlackJack) {
                 labelMessage = "Dealer Wins!";
-            else {
+                labelColor = Color.RED;
+                balance -= doubleDown ? currentBet * 2 : currentBet;
+            } else {
                 labelMessage = "Tie";
+                labelColor = Color.YELLOW;
                 money += doubleDown ? currentBet * 2 : currentBet;
             }
-        } else labelMessage = "Dealer Wins!";
+        } else {
+            labelMessage = "Dealer Wins!";
+            labelColor = Color.RED;
+            balance -= doubleDown ? currentBet * 2 : currentBet;
+        }
         if(resultField == null) {
             resultField = new JTextField();
             resultField.setBackground(new Color(20, 100, 20));
@@ -183,13 +230,27 @@ public class Window extends JFrame implements Runnable {
             pageStartPanel.add(resultField);
         }
 
+        balanceField.setText(" Balance: " + balance + "$\t\t");
+        if(balance > 0)
+            balanceField.setForeground(Color.GREEN);
+        else if (balance == 0)
+            balanceField.setForeground(Color.YELLOW);
+        else
+            balanceField.setForeground(new Color(242, 73, 73));
+
+        balanceField.revalidate();
+
         doubleDown = false;
         playerHasHit = false;
+
+        if(money == 0)
+            money = 5_000;
 
         moneyField.setText("$" + money);
         moneyField.getParent().revalidate();
 
         resultField.setText(labelMessage);
+        resultField.setForeground(labelColor);
         resultField.setVisible(true);
 
         resultField.getParent().revalidate();

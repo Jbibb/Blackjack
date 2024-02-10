@@ -9,6 +9,7 @@ public class CardPanel extends JPanel {
     private ArrayList<Card> playerHand = new ArrayList<>();
     private Window parent;
     private int deckIndex = 0;
+    private int waitTimeBetweenDealerActions = 400;
 
     private AudioPlayer audioPlayer = new AudioPlayer("flipcard.wav");
     public CardPanel(Card[] deck, Window parent){
@@ -40,7 +41,7 @@ public class CardPanel extends JPanel {
 
         Thread dealThread = new Thread( () -> {
             try {
-                Thread.sleep(200);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -54,7 +55,7 @@ public class CardPanel extends JPanel {
             cardVisual.reverse();
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -63,7 +64,7 @@ public class CardPanel extends JPanel {
             cardVisual.reverse();
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -75,7 +76,7 @@ public class CardPanel extends JPanel {
             playerHand.add(cardVisual.card);
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -84,22 +85,22 @@ public class CardPanel extends JPanel {
             dealerHand.add(cardVisual.card);
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
 
             evaluatePlayerHand();
-            if(playerScore == 21) {
+            if(playerHasBlackJack) {
                 cardVisuals.get(3).reverse();
 
                 try {
-                    Thread.sleep(750);
+                    Thread.sleep(waitTimeBetweenDealerActions);
                 } catch (InterruptedException e){
                     e.printStackTrace();
                 }
 
-                parent.setDealResult(21, 0, false, false);
+                parent.setDealResult(21, 0, playerHasBlackJack, false);
             } else
                 parent.offerChoice();
         });
@@ -112,7 +113,7 @@ public class CardPanel extends JPanel {
             cardVisuals.get(3).reverse();
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -126,7 +127,7 @@ public class CardPanel extends JPanel {
                 cardVisual.reverse();
 
                 try {
-                    Thread.sleep(750);
+                    Thread.sleep(waitTimeBetweenDealerActions);
                 } catch (InterruptedException e){
                     e.printStackTrace();
                 }
@@ -149,7 +150,7 @@ public class CardPanel extends JPanel {
             evaluatePlayerHand();
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e1){
                 e1.printStackTrace();
             }
@@ -158,7 +159,7 @@ public class CardPanel extends JPanel {
                 cardVisuals.get(3).reverse();
 
                 try {
-                    Thread.sleep(750);
+                    Thread.sleep(waitTimeBetweenDealerActions);
                 } catch (InterruptedException e1){
                     e1.printStackTrace();
                 }
@@ -175,13 +176,22 @@ public class CardPanel extends JPanel {
 
     public void doubleDown() {
         Thread thread = new Thread( () -> {
+
             CardVisual cardVisual = dealCard(playerCardsBaseX, playerCardsBaseY);
             cardVisual.reverse();
             playerCardsBaseX += cardWidth/2;
             playerHand.add(cardVisual.card);
 
             try {
-                Thread.sleep(750);
+                Thread.sleep(waitTimeBetweenDealerActions);
+            } catch (InterruptedException e1){
+                e1.printStackTrace();
+            }
+
+            cardVisuals.get(3).reverse();
+
+            try {
+                Thread.sleep(waitTimeBetweenDealerActions);
             } catch (InterruptedException e1){
                 e1.printStackTrace();
             }
@@ -189,25 +199,8 @@ public class CardPanel extends JPanel {
             evaluatePlayerHand();
 
             if(playerScore > 21) {
-                cardVisuals.get(3).reverse();
-
-                try {
-                    Thread.sleep(750);
-                } catch (InterruptedException e1){
-                    e1.printStackTrace();
-                }
-
                 parent.setDealResult(playerScore, 0, false, false);
             } else {
-
-                cardVisuals.get(3).reverse();
-
-                try {
-                    Thread.sleep(750);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 evaluateDealerHand();
 
                 int i = 2;
@@ -217,7 +210,7 @@ public class CardPanel extends JPanel {
                     dealerHand.add(cardVisual.card);
 
                     try {
-                        Thread.sleep(750);
+                        Thread.sleep(waitTimeBetweenDealerActions);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -242,7 +235,7 @@ public class CardPanel extends JPanel {
         dealerHasAce = false;
         int maxValueAces = 0;
         for (Card card : dealerHand) {
-            if (card.value.value < 9)
+            if (card.value.value < 8)
                 dealerScore += card.value.value + 2;
             else if (card.value.value < 12) {
                 dealerHas10PointCard = true;
@@ -277,7 +270,7 @@ public class CardPanel extends JPanel {
         playerHasAce = false;
         int maxValueAces = 0;
         for (Card card : playerHand) {
-            if (card.value.value < 9)
+            if (card.value.value < 8)
                 playerScore += card.value.value + 2;
             else if (card.value.value < 12) {
                 playerHas10PointCard = true;
