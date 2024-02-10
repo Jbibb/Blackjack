@@ -90,9 +90,17 @@ public class CardPanel extends JPanel {
             }
 
             evaluatePlayerHand();
-            if(playerScore == 21)
+            if(playerScore == 21) {
+                cardVisuals.get(3).reverse();
+
+                try {
+                    Thread.sleep(750);
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+
                 parent.setDealResult(21, 0, false, false);
-            else
+            } else
                 parent.offerChoice();
         });
         dealThread.start();
