@@ -18,7 +18,7 @@ public class ImageHandler {
 
     public static void scaleImages(int width, int height) {
         for(Map.Entry entry : images.entrySet()){
-            entry.setValue(((BufferedImage)(entry.getValue())).getScaledInstance(width, height, Image.SCALE_SMOOTH));
+            entry.setValue(((Image)(entry.getValue())).getScaledInstance(width, height, Image.SCALE_SMOOTH));
         }
     }
 

@@ -36,6 +36,9 @@ public class CardPanel extends JPanel {
         deckX = this.getWidth() - (int) (cardWidth * 1.5) - cardWidth / 2;
         deckY = this.getHeight() / 6 - cardHeight / 2;
 
+        playerCardsBaseX = this.getWidth() / 2 - cardWidth;
+        playerCardsBaseY = (int) (this.getHeight() / 1.4);
+
         playerHand.clear();
         dealerHand.clear();
 
@@ -45,9 +48,6 @@ public class CardPanel extends JPanel {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
-
-            playerCardsBaseX = this.getWidth() / 2 - cardWidth;
-            playerCardsBaseY = (int) (this.getHeight() / 1.4);
 
             CardVisual cardVisual = dealCard(playerCardsBaseX, playerCardsBaseY);
             playerCardsBaseX += cardWidth/2;
@@ -59,6 +59,7 @@ public class CardPanel extends JPanel {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
+
             cardVisual = dealCard(this.getWidth() / 2 - cardWidth / 2 * 3, cardWidth/8);
             dealerHand.add(cardVisual.card);
             cardVisual.reverse();
@@ -69,11 +70,10 @@ public class CardPanel extends JPanel {
                 e.printStackTrace();
             }
 
-
             cardVisual = dealCard(playerCardsBaseX, playerCardsBaseY);
-            cardVisual.reverse();
             playerCardsBaseX += cardWidth/2;
             playerHand.add(cardVisual.card);
+            cardVisual.reverse();
 
             try {
                 Thread.sleep(waitTimeBetweenDealerActions);
@@ -165,7 +165,7 @@ public class CardPanel extends JPanel {
                 }
 
                 parent.setDealResult(playerScore, 0, false, false);
-            } else if(playerHasBlackJack) {
+            } else if(playerScore == 21) {
                 stand();
             } else {
                 parent.offerChoice();
@@ -231,30 +231,24 @@ public class CardPanel extends JPanel {
     private void evaluateDealerHand() {
         dealerScore = 0;
         dealerHasBlackJack = false;
-        dealerHas10PointCard = false;
         dealerHasAce = false;
         int maxValueAces = 0;
         for (Card card : dealerHand) {
             if (card.value.value < 8)
                 dealerScore += card.value.value + 2;
             else if (card.value.value < 12) {
-                dealerHas10PointCard = true;
                 dealerScore += 10;
             } else {
                 dealerHasAce = true;
                 maxValueAces++;
-                dealerScore += 10;
+                dealerScore += 11;
             }
         }
-        if(dealerHand.size() == 2 && dealerHasAce && dealerHas10PointCard) {
+        if(dealerHand.size() == 2 && dealerScore == 21) {
             dealerHasBlackJack = true;
-            dealerScore = 21;
-        } else if(dealerHand.size() == 2 && maxValueAces == 2) {
-            dealerHasBlackJack = true;
-            dealerScore = 21;
         }
         while (dealerScore > 21 && maxValueAces > 0) {
-            dealerScore -= 9;
+            dealerScore -= 10;
             maxValueAces--;
         }
     }
@@ -278,17 +272,13 @@ public class CardPanel extends JPanel {
             } else {
                 playerHasAce = true;
                 maxValueAces++;
-                playerScore += 10;
+                playerScore += 11;
             }
         }
-        if(playerHand.size() == 2 && playerHasAce && playerHas10PointCard) {
+        if(playerHand.size() == 2 && playerScore == 21) {
             playerHasBlackJack = true;
-            playerScore = 21;
-        } else if(playerHand.size() == 2 && maxValueAces == 2) {
-            playerHasBlackJack = true;
-            playerScore = 21;
         } while (playerScore > 21 && maxValueAces > 0) {
-            playerScore -= 9;
+            playerScore -= 10;
             maxValueAces--;
         }
     }

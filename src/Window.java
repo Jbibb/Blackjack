@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 public class Window extends JFrame implements Runnable {
 
     private Card[] deck;
+    private String fontName = "Verdana";
     private CardPanel cardPanel;
     private JPanel buttonPanel;
     private JButton dealButton, doubleButton;
@@ -18,10 +19,9 @@ public class Window extends JFrame implements Runnable {
     private boolean doubleDown = false;
     private boolean playerHasHit = false;
     private int currentBet = 0;
-    private AudioPlayer audioPlayer;
-    public Window(Card[] deck, AudioPlayer audioPlayer){
+    private JTextField resultField;
+    public Window(Card[] deck){
         this.deck = deck;
-        this.audioPlayer = audioPlayer;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Window extends JFrame implements Runnable {
         moneyField.setBorder(BorderFactory.createEmptyBorder());
         moneyField.setEditable(false);
         moneyField.setText("$" + money);
-        moneyField.setFont(new Font("Arial", Font.BOLD, 22));
+        moneyField.setFont(new Font(fontName, Font.BOLD, 22));
         moneyField.setForeground(Color.YELLOW);
         moneyField.setBackground(new Color(20, 100, 20));
 
@@ -43,7 +43,7 @@ public class Window extends JFrame implements Runnable {
         betField.setBorder(BorderFactory.createEmptyBorder());
         betField.setEditable(false);
         betField.setText(" Current bet: $" + currentBet);
-        betField.setFont(new Font("Arial", 3, 16));
+        betField.setFont(new Font(fontName, 3, 16));
         betField.setForeground(Color.ORANGE);
         betField.setBackground(new Color(20, 100, 20));
 
@@ -51,7 +51,7 @@ public class Window extends JFrame implements Runnable {
         balanceField.setBorder(BorderFactory.createEmptyBorder());
         balanceField.setEditable(false);
         balanceField.setText(" Balance: " + balance + "$\t\t");
-        balanceField.setFont(new Font("Arial", 3, 16));
+        balanceField.setFont(new Font(fontName, 3, 16));
         balanceField.setForeground(Color.YELLOW);
         balanceField.setBackground(new Color(20, 100, 20));
 
@@ -61,14 +61,22 @@ public class Window extends JFrame implements Runnable {
         betSpinner = new JSpinner(new SpinnerNumberModel(50, 50, 5_000, 50));
         betPanel.add(betSpinner);
 
+        resultField = new JTextField();
+        resultField.setBackground(new Color(20, 100, 20));
+        resultField.setBorder(BorderFactory.createEmptyBorder());
+        resultField.setForeground(Color.ORANGE);
+        resultField.setFont(new Font(fontName, 4, 24));
+        resultField.setEditable(false);
+
         pageStartPanel.add(moneyField);
         pageStartPanel.add(betField);
         pageStartPanel.add(balanceField);
+        pageStartPanel.add(resultField);
 
         this.cardPanel = new CardPanel(deck, this);
         cardPanel.setBackground(new Color(20, 100, 20));
 
-        setSize(975, 795);
+        setSize(836, 686);
         cardPanel.scale();
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -92,11 +100,9 @@ public class Window extends JFrame implements Runnable {
                     betSpinner.getParent().revalidate();
 
                     dealButton.setVisible(false);
-                    if (resultField != null) {
-                        resultField.setVisible(false);
-                        resultField.getParent().getParent().revalidate();
-                        resultField.getParent().revalidate();
-                    }
+                    resultField.setVisible(false);
+                    resultField.getParent().getParent().revalidate();
+                    resultField.getParent().revalidate();
                     cardPanel.deal();
                 }
             }
@@ -175,39 +181,39 @@ public class Window extends JFrame implements Runnable {
         dealButton.setVisible(false);
         buttonPanel.revalidate();
     }
-
-    private JTextField resultField;
     public void setDealResult(int playerScore, int dealerScore, boolean playerHasBlackJack, boolean dealerHasBlackJack){
         String labelMessage;
         Color labelColor;
+        Color loseMessageColor = new Color(242, 73, 73);
+        Color winMessageColor = new Color(38, 210, 87);
         if(playerHasBlackJack) {
             labelMessage = "Player Wins!";
-            labelColor = Color.GREEN;
-            money += (int) (currentBet * 1.5d);
-            balance += (int)(currentBet * 0.5d);
+            labelColor = winMessageColor;
+            money += doubleDown ? currentBet * 4 : currentBet * 2;
+            balance += doubleDown ? currentBet * 2 : currentBet;
         } else if(dealerScore > 21) {
             labelMessage = "Dealer Bust!";
-            labelColor = Color.GREEN;
+            labelColor = winMessageColor;
             money += doubleDown ? currentBet * 4 : currentBet * 2;
             balance += doubleDown ? currentBet * 2 : currentBet;
         } else if (playerScore > 21) {
             labelMessage = "Player Bust!";
-            labelColor = Color.RED;
+            labelColor = loseMessageColor;
             balance -= doubleDown ? currentBet * 2 : currentBet;;
         } else if(playerScore > dealerScore) {
             labelMessage = "Player Wins!";
-            labelColor = Color.GREEN;
+            labelColor = winMessageColor;
             money += doubleDown ? currentBet * 4 : currentBet * 2;
             balance += doubleDown ? currentBet * 2 : currentBet;
         } else if(playerScore == dealerScore) {
             if (playerHasBlackJack && !dealerHasBlackJack) {
                 labelMessage = "Player Wins!";
-                labelColor = Color.GREEN;
+                labelColor = winMessageColor;
                 money += doubleDown ? currentBet * 4 : currentBet * 2;
                 balance += doubleDown ? currentBet * 2 : currentBet;
             } else if (!playerHasBlackJack && dealerHasBlackJack) {
                 labelMessage = "Dealer Wins!";
-                labelColor = Color.RED;
+                labelColor = loseMessageColor;
                 balance -= doubleDown ? currentBet * 2 : currentBet;
             } else {
                 labelMessage = "Tie";
@@ -216,22 +222,20 @@ public class Window extends JFrame implements Runnable {
             }
         } else {
             labelMessage = "Dealer Wins!";
-            labelColor = Color.RED;
+            labelColor = new Color(242, 73, 73);
             balance -= doubleDown ? currentBet * 2 : currentBet;
         }
-        if(resultField == null) {
-            resultField = new JTextField();
-            resultField.setBackground(new Color(20, 100, 20));
-            resultField.setBorder(BorderFactory.createEmptyBorder());
-            resultField.setForeground(Color.ORANGE);
-            resultField.setFont(new Font("Arial", 2, 30));
-            resultField.setEditable(false);
-            pageStartPanel.add(resultField);
-        }
+
+        resultField.setText(labelMessage);
+        resultField.setForeground(labelColor);
+
+        resultField.setVisible(true);
+        resultField.getParent().revalidate();
+        resultField.revalidate();
 
         balanceField.setText(" Balance: " + balance + "$\t\t");
         if(balance > 0)
-            balanceField.setForeground(Color.GREEN);
+            balanceField.setForeground(new Color(38, 210, 87));
         else if (balance == 0)
             balanceField.setForeground(Color.YELLOW);
         else
@@ -248,12 +252,6 @@ public class Window extends JFrame implements Runnable {
         moneyField.setText("$" + money);
         moneyField.getParent().revalidate();
 
-        resultField.setText(labelMessage);
-        resultField.setForeground(labelColor);
-        resultField.setVisible(true);
-
-        resultField.getParent().revalidate();
-
         buttonPanel.setVisible(true);
         for(Component c : buttonPanel.getComponents())
             c.setVisible(false);
@@ -262,6 +260,5 @@ public class Window extends JFrame implements Runnable {
         betSpinner.setVisible(true);
 
         betPanel.revalidate();
-        this.getContentPane().revalidate();
     }
 }
