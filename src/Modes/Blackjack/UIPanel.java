@@ -1,5 +1,7 @@
 package Modes.Blackjack;
 
+import Menus.AudioPlayer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -178,6 +180,7 @@ public class UIPanel extends JPanel {
         buttonPanel.revalidate();
 
         this.add(pageStartPanel, BorderLayout.PAGE_START);
+
     }
 
     public void offerChoice() {

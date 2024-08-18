@@ -9,7 +9,7 @@ public class GameSession {
     private JPanel gamePanel;
     public GameSession(GameMode gameMode, JPanel gamePanel){
         this.gameMode = gameMode;
-        this.gamePanel = gameMode.getGamePanel();
+        this.gamePanel = gamePanel;
     }
 
     public JPanel getGamePanel(){

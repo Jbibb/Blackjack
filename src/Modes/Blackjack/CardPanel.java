@@ -23,7 +23,8 @@ public class CardPanel extends JPanel {
     private Logic.EndStates dealEndState;
     private int waitTimeBetweenDealerActions = 500;
     private UIPanel uiPanel;
-    private AudioPlayer audioPlayer = new AudioPlayer("flipcard.wav");
+    private AudioPlayer cardFlipPlayer = new AudioPlayer("flipcard.wav");
+    private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
     private int frameTime = 8;
     public CardPanel(UIPanel uiPanel){
         this.uiPanel = uiPanel;
@@ -37,6 +38,7 @@ public class CardPanel extends JPanel {
 
         repaintTimer.start();
         executor.start();
+        backgroundMusicPlayer.play();
     }
     private java.util.Queue<CardVisual> cardVisualsToBeDealt = new LinkedList<>();
     private java.util.Queue<Runnable> executionQueue = new LinkedList();
@@ -44,6 +46,7 @@ public class CardPanel extends JPanel {
         uiPanel.offerChoice();
     };
     private final Runnable revealHiddenCardAction = () -> {
+        cardFlipPlayer.playOnce();
         cardVisuals.get(3).reveal();
     };
     private final Runnable dealResultAction = () -> {
@@ -60,7 +63,7 @@ public class CardPanel extends JPanel {
     private Runnable cardDealAction = () -> {
             CardVisual cardVisual = cardVisualsToBeDealt.poll();
             if (cardVisual != null) {
-                audioPlayer.playOnce();
+                cardFlipPlayer.playOnce();
                 cardVisuals.add(cardVisual);
                 if (cardVisual.dealtTo == Logic.CardDealtTo.Player) {
                     cardVisual.moveTo(nextPlayerCardX, nextPlayerCardY);
