@@ -12,6 +12,8 @@ public class ImageHandler {
     private static HashMap<String, Image> originalImages = new HashMap<>();
     private static HashMap<String, Image> scaledImages = new HashMap<>();
 
+    public static final int originalCardWidth = 209, originalcardHeight = 303;
+
     public static void loadImages() {
         ClassLoader classLoader = ImageHandler.class.getClassLoader();
         for (String imageName : CardImageNamesFetcher.fetchCardImageNames()) {
@@ -22,6 +24,7 @@ public class ImageHandler {
                 originalImages.put(imageName, new ImageIcon(resourceUrl).getImage());
                 scaledImages.put(imageName, new ImageIcon(resourceUrl).getImage());
             }
+            else System.out.println(imagePath + " is null");
         }
     }
 

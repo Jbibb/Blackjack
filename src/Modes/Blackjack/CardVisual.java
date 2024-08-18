@@ -10,6 +10,7 @@ class CardVisual {
     public Card card;
     public boolean isHidden;
     public boolean isMoving;
+    public Logic.CardDealtTo dealtTo;
     public int x, y, destinationX, destinationY;
     private int animationLength = 100;
     private Component parent;
@@ -51,12 +52,13 @@ class CardVisual {
             }
         }});
 
-    public CardVisual(Card card, int x, int y, Component parent, boolean isHidden){
+    public CardVisual(Card card, int x, int y, Component parent, boolean isHidden, Logic.CardDealtTo dealtTo){
         this.card = card;
         this.x = x;
         this.y = y;
         this.parent = parent;
         this.isHidden = isHidden;
+        this.dealtTo = dealtTo;
     }
 
     public void moveTo(int destinationX, int destinationY){
