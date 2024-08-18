@@ -40,9 +40,6 @@ public class CardPanel extends JPanel {
     }
     private java.util.Queue<CardVisual> cardVisualsToBeDealt = new LinkedList<>();
     private java.util.Queue<Runnable> executionQueue = new LinkedList();
-    private final Runnable instantPlayerBlackjackAction = () -> {
-        uiPanel.setDealResult(balanceChange, dealEndState);
-    };
     private final Runnable offerChoiceAction = () -> {
         uiPanel.offerChoice();
     };
@@ -82,10 +79,6 @@ public class CardPanel extends JPanel {
         CardVisual cardVisual = new CardVisual(card, deckX, deckY, this, isHidden, cardDealtTo);
         cardVisualsToBeDealt.add(cardVisual);
         executionQueue.add(cardDealAction);
-    }
-    public void firePlayerInstantBlackJack(){
-        executionQueue.add(revealHiddenCardAction);
-        executionQueue.add(instantPlayerBlackjackAction);
     }
     public void fireOfferChoice(){
         executionQueue.add(offerChoiceAction);

@@ -83,23 +83,22 @@ public class Logic {
 
         int score = evaluateHand(playerHand);
 
-        if(score == -1) { //if player has blackjack
-            cardPanel.firePlayerInstantBlackJack();
+        if(score == -1) {
+            cardPanel.fireDealResult(bet, EndStates.PlayerWins);
         } else
             cardPanel.fireOfferChoice();
     }
 
     public void stand(){
-        int playerScore = evaluateHand(playerHand);
-
         cardPanel.fireRevealDealerHiddenCard();
 
         int dealerScore = evaluateHand(dealerHand);
 
-        int i = 2;
-        while (dealerScore < 17) {
-            dealCard(false, CardDealtTo.Dealer);
-            dealerScore = evaluateHand(dealerHand);
+        if(dealerScore != -1) {
+            while (dealerScore < 17) {
+                dealCard(false, CardDealtTo.Dealer);
+                dealerScore = evaluateHand(dealerHand);
+            }
         }
         dealResult();
     }
