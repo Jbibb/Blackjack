@@ -81,10 +81,16 @@ public class Logic {
         dealCard(false, CardDealtTo.Player);
         dealCard(true, CardDealtTo.Dealer);
 
-        int score = evaluateHand(playerHand);
+        int playerScore = evaluateHand(playerHand);
 
-        if(score == -1) {
-            cardPanel.fireDealResult(bet, EndStates.PlayerWins);
+        if(playerScore == -1) {
+            cardPanel.fireRevealDealerHiddenCard();
+            int dealerScore = evaluateHand(dealerHand);
+            if(dealerScore == -1){
+                cardPanel.fireDealResult(0, EndStates.Tie);
+            } else {
+                cardPanel.fireDealResult(bet, EndStates.PlayerWins);
+            }
         } else
             cardPanel.fireOfferChoice();
     }
