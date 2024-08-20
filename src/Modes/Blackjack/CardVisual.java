@@ -11,7 +11,8 @@ class CardVisual {
     public boolean isHidden;
     public boolean isMoving;
     public Logic.CardDealtTo dealtTo;
-    public int x, y, destinationX, destinationY;
+    public int x, y;
+    public int destinationX, destinationY;
     private int animationLength = 100;
     private Component parent;
     private int frameTime = 8;

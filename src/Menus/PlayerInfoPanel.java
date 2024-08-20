@@ -5,26 +5,24 @@ import Logic.PlayerModel;
 import javax.swing.*;
 import java.awt.*;
 
-public class PlayerInfoPanel extends JPanel implements Observer {
+public class PlayerInfoPanel extends JPanel {
     private PlayerModel playerModel;
-    private JLabel nameLabel, moneyLabel;
+    private JLabel nameLabel;
 
-    public PlayerInfoPanel(PlayerModel playerModel){
-        this.playerModel = playerModel;
+    public PlayerInfoPanel(JButton returnButton){
         this.setLayout(new BorderLayout());
 
         nameLabel = new JLabel();
-        moneyLabel = new JLabel();
-
-        nameLabel.setText(playerModel.getName());
-        moneyLabel.setText(String.valueOf(playerModel.getMoney()));
 
         this.add(nameLabel, BorderLayout.LINE_START);
-        this.add(moneyLabel, BorderLayout.LINE_END);
+        this.add(returnButton, BorderLayout.LINE_END);
     }
 
-    @Override
-    public void fire() {
-        moneyLabel.setText(String.valueOf(playerModel.getMoney()));
+    public void setPlayerModel(PlayerModel playerModel){
+        this.playerModel = playerModel;
+        if(playerModel != null)
+            nameLabel.setText(playerModel.getName());
+        else
+            nameLabel.setText("");
     }
 }

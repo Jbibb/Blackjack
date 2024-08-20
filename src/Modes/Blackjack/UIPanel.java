@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import Logic.PlayerModel;
+import Modes.GamePanel;
 
-public class UIPanel extends JPanel {
+public class UIPanel extends JPanel implements GamePanel {
     private String fontName = "Verdana";
     private Logic gameLogic;
     private JPanel buttonPanel;
@@ -23,9 +25,10 @@ public class UIPanel extends JPanel {
     private boolean playerHasHit = false;
     private int currentBet = 0;
     private JTextField resultField;
-    public int money = 0;
-    public UIPanel(int m) {
-        money = m;
+    public PlayerModel playerModel;
+    private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
+    public UIPanel(PlayerModel playerModel) {
+        this.playerModel = playerModel;
         FlowLayout flowLayout = new FlowLayout();
         flowLayout.setAlignment(FlowLayout.LEFT);
         pageStartPanel = new JPanel(flowLayout);
@@ -34,7 +37,7 @@ public class UIPanel extends JPanel {
         moneyField = new JTextField();
         moneyField.setBorder(BorderFactory.createEmptyBorder());
         moneyField.setEditable(false);
-        moneyField.setText("$" + money);
+        moneyField.setText("$" + playerModel.getMoney());
         moneyField.setFont(new Font(fontName, Font.BOLD, 22));
         moneyField.setForeground(Color.YELLOW);
         moneyField.setBackground(new Color(20, 100, 20));
@@ -97,11 +100,11 @@ public class UIPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int spinnerBetValue = (Integer)(betSpinner.getValue());
-                if(spinnerBetValue <= money) {
+                if(spinnerBetValue <= playerModel.getMoney()) {
                     currentBet = spinnerBetValue;
-                    money -= currentBet;
+                    playerModel.setMoney(playerModel.getMoney() - currentBet);
 
-                    moneyField.setText("$" + money);
+                    moneyField.setText("$" + playerModel.getMoney());
                     moneyField.revalidate();
 
                     betField.setText(" Current bet: $" + currentBet);
@@ -148,11 +151,12 @@ public class UIPanel extends JPanel {
         doubleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(money >= currentBet && !playerHasHit) {
-                    money -= currentBet;
-                    moneyField.setText("$" + money);
+                if(playerModel.getMoney() >= currentBet) {
+                    playerModel.setMoney(playerModel.getMoney() - currentBet);
+                    moneyField.setText("$" + playerModel.getMoney());
 
-                    betField.setText(" Current bet: $" + 2*currentBet);
+                    currentBet *= 2;
+                    betField.setText(" Current bet: $" + currentBet);
                     betField.revalidate();
 
                     doubleDown = true;
@@ -180,7 +184,7 @@ public class UIPanel extends JPanel {
         buttonPanel.revalidate();
 
         this.add(pageStartPanel, BorderLayout.PAGE_START);
-
+        backgroundMusicPlayer.play();
     }
 
     public void offerChoice() {
@@ -199,8 +203,7 @@ public class UIPanel extends JPanel {
         Color winMessageColor = new Color(38, 210, 87);
 
         balance += balanceChange;
-        money += balanceChange;
-        money += currentBet;
+        playerModel.setMoney(playerModel.getMoney() + balanceChange + currentBet);
 
         resultField.setText(labelMessage);
         if(endState == Logic.EndStates.PlayerWins || endState == Logic.EndStates.DealerBust) {
@@ -230,10 +233,11 @@ public class UIPanel extends JPanel {
         doubleDown = false;
         playerHasHit = false;
 
-        if(money == 0)
-            money = 5_000;
+        if(playerModel.getMoney() == 0)
+            //todo
+            System.out.println("yer done");
 
-        moneyField.setText("$" + money);
+        moneyField.setText("$" + playerModel.getMoney());
         moneyField.getParent().revalidate();
 
         buttonPanel.setVisible(true);
@@ -248,7 +252,8 @@ public class UIPanel extends JPanel {
         resultField.setVisible(true);
     }
 
-    public int getMoney() {
-        return money;
+    @Override
+    public void end() {
+        backgroundMusicPlayer.stop();
     }
 }

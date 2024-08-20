@@ -24,7 +24,7 @@ public class CardPanel extends JPanel {
     private int waitTimeBetweenDealerActions = 500;
     private UIPanel uiPanel;
     private AudioPlayer cardFlipPlayer = new AudioPlayer("flipcard.wav");
-    private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
+
     private int frameTime = 8;
     public CardPanel(UIPanel uiPanel){
         this.uiPanel = uiPanel;
@@ -38,7 +38,6 @@ public class CardPanel extends JPanel {
 
         repaintTimer.start();
         executor.start();
-        backgroundMusicPlayer.play();
     }
     private java.util.Queue<CardVisual> cardVisualsToBeDealt = new LinkedList<>();
     private java.util.Queue<Runnable> executionQueue = new LinkedList();
@@ -149,7 +148,7 @@ public class CardPanel extends JPanel {
         Image deck = ImageHandler.getImage("Back");
         g.drawImage(deck, deckX, deckY, null);
         Image cardImage;
-        for(CardVisual cardVisual : cardVisuals) {
+        for (CardVisual cardVisual : cardVisuals) {
             if (cardVisual.isHidden)
                 cardImage = ImageHandler.getImage("Back");
             else {

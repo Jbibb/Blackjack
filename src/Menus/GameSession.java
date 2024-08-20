@@ -1,6 +1,7 @@
 package Menus;
 
 import Modes.GameMode;
+import Modes.GamePanel;
 
 import javax.swing.*;
 
@@ -14,5 +15,9 @@ public class GameSession {
 
     public JPanel getGamePanel(){
         return gamePanel;
+    }
+
+    public void end(){
+        ((GamePanel)gamePanel).end();
     }
 }
