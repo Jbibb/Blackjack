@@ -26,6 +26,7 @@ public class MainWindow extends JFrame implements Runnable {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
 
         returnButton = new JButton("Return");
+        returnButton.setFocusable(false);
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -35,6 +36,8 @@ public class MainWindow extends JFrame implements Runnable {
 
         playerInfoPanel = new PlayerInfoPanel(returnButton);
         getContentPane().add(playerInfoPanel, BorderLayout.NORTH);
+
+        contentPanel.setBackground(Palette.BACKGROUND_COLOR);
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -58,9 +61,9 @@ public class MainWindow extends JFrame implements Runnable {
         returnButton.setVisible(false);
         this.contentPanel.removeAll();
 
-        PlayerChoicePanel playerChoicePanel = new PlayerChoicePanel();
-        this.contentPanel.add(new ModeChoicePanel(this, playerChoicePanel), BorderLayout.NORTH);
-        this.contentPanel.add(playerChoicePanel, BorderLayout.SOUTH);
+        PlayerListPanel playerListPanel = new PlayerListPanel();
+        this.contentPanel.add(new ModeChoicePanel(this, playerListPanel), BorderLayout.NORTH);
+        this.contentPanel.add(playerListPanel, BorderLayout.SOUTH);
 
         playerInfoPanel.setPlayerModel(null);
         this.revalidate();

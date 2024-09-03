@@ -2,6 +2,7 @@ package Modes.Blackjack;
 
 import Logic.Card;
 import Menus.AudioPlayer;
+import Menus.Palette;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +29,7 @@ public class CardPanel extends JPanel {
     private int frameTime = 8;
     public CardPanel(UIPanel uiPanel){
         this.uiPanel = uiPanel;
-        setBackground(new Color(20, 100, 20));
+        setBackground(Palette.BACKGROUND_COLOR);
         Timer repaintTimer = new Timer(frameTime, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

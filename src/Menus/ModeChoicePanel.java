@@ -5,29 +5,34 @@ import Modes.Blackjack.BlackjackGame;
 import Modes.GameMode;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.StrokeBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ObjectInputStream;
 import java.util.HashMap;
 
 public class ModeChoicePanel extends JPanel {
-    private PlayerChoicePanel playerChoicePanel;
+    private PlayerListPanel playerListPanel;
 
     private static GameMode[] gameModes = new GameMode[] {
             new BlackjackGame()
     };
 
     private HashMap<JButton, GameMode> buttonsAndModes = new HashMap<>();
-    public ModeChoicePanel(MainWindow mainWindow, PlayerChoicePanel playerChoicePanel){
+    public ModeChoicePanel(MainWindow mainWindow, PlayerListPanel playerListPanel){
         for (GameMode gameMode : gameModes){
             JButton button = new JButton(gameMode.getName());
-            this.add(button);
+            button.setPreferredSize(new Dimension(100, 50));
+            add(button);
+            button.setFocusable(false);
             buttonsAndModes.put(button, gameMode);
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     GameMode gameMode = buttonsAndModes.get(button);
-                    PlayerModel playerModel = playerChoicePanel.getSelectedPlayer();
+                    PlayerModel playerModel = playerListPanel.getSelectedPlayer();
                     if(playerModel != null) {
                         mainWindow.setPlayerModel(playerModel);
                         gameMode.setPlayerModel(playerModel);
@@ -39,6 +44,9 @@ public class ModeChoicePanel extends JPanel {
                 }
             });
         }
+
+        setBackground(Palette.ALT_BACKGROUND_COLOR);
+
         this.setVisible(true);
     }
 }

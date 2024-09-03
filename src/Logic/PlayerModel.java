@@ -9,11 +9,12 @@ public class PlayerModel implements Serializable {
 
     public static ArrayList<PlayerModel> players;
     private String name;
-    private int money;
+    private int initialMoney, money;
 
     public PlayerModel(String name, int money) {
         this.name = name;
         this.money = money;
+        this.initialMoney = money;
     }
 
     public static void loadSavedPlayers(){
@@ -68,8 +69,12 @@ public class PlayerModel implements Serializable {
         savePlayers();
     }
 
+    public double getChangePercentage(){
+        return (double)money/initialMoney * 100 - 100;
+    }
+
     @Override
     public String toString(){
-        return name + " === " + money;
+        return name + " === " + money + " === " + getChangePercentage() + "%";
     }
 }

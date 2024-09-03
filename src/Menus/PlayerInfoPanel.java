@@ -13,9 +13,13 @@ public class PlayerInfoPanel extends JPanel {
         this.setLayout(new BorderLayout());
 
         nameLabel = new JLabel();
+        nameLabel.setFont(new Font("Verdana", Font.PLAIN, 14));
+        nameLabel.setForeground(Palette.DEFAULT_FONT_COLOR);
 
         this.add(nameLabel, BorderLayout.LINE_START);
         this.add(returnButton, BorderLayout.LINE_END);
+
+        setBackground(Palette.ALT_BACKGROUND_COLOR);
     }
 
     public void setPlayerModel(PlayerModel playerModel){

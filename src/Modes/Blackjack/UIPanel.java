@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import Logic.PlayerModel;
+import Menus.Palette;
 import Modes.GamePanel;
 
 public class UIPanel extends JPanel implements GamePanel {
@@ -32,7 +33,8 @@ public class UIPanel extends JPanel implements GamePanel {
         FlowLayout flowLayout = new FlowLayout();
         flowLayout.setAlignment(FlowLayout.LEFT);
         pageStartPanel = new JPanel(flowLayout);
-        pageStartPanel.setBackground(new Color(20, 100, 20));
+
+        pageStartPanel.setBackground(Palette.BACKGROUND_COLOR);
 
         moneyField = new JTextField();
         moneyField.setBorder(BorderFactory.createEmptyBorder());
@@ -40,7 +42,7 @@ public class UIPanel extends JPanel implements GamePanel {
         moneyField.setText("$" + playerModel.getMoney());
         moneyField.setFont(new Font(fontName, Font.BOLD, 22));
         moneyField.setForeground(Color.YELLOW);
-        moneyField.setBackground(new Color(20, 100, 20));
+        moneyField.setBackground(Palette.BACKGROUND_COLOR);
 
         betField = new JTextField();
         betField.setBorder(BorderFactory.createEmptyBorder());
@@ -48,7 +50,7 @@ public class UIPanel extends JPanel implements GamePanel {
         betField.setText(" Current bet: $" + currentBet);
         betField.setFont(new Font(fontName, 3, 16));
         betField.setForeground(Color.ORANGE);
-        betField.setBackground(new Color(20, 100, 20));
+        betField.setBackground(Palette.BACKGROUND_COLOR);
 
         balanceField = new JTextField();
         balanceField.setBorder(BorderFactory.createEmptyBorder());
@@ -56,16 +58,17 @@ public class UIPanel extends JPanel implements GamePanel {
         balanceField.setText(" Balance: " + balance + "$\t\t");
         balanceField.setFont(new Font(fontName, 3, 16));
         balanceField.setForeground(Color.YELLOW);
-        balanceField.setBackground(new Color(20, 100, 20));
+        balanceField.setBackground(Palette.BACKGROUND_COLOR);
 
         betPanel = new JPanel();
         betPanel.setLayout(new FlowLayout());
 
         betSpinner = new JSpinner(new SpinnerNumberModel(50, 50, 5_000, 50));
+        betSpinner.setFocusable(false);
         betPanel.add(betSpinner);
 
         resultField = new JTextField();
-        resultField.setBackground(new Color(20, 100, 20));
+        resultField.setBackground(Palette.BACKGROUND_COLOR);
         resultField.setBorder(BorderFactory.createEmptyBorder());
         resultField.setForeground(Color.ORANGE);
         resultField.setFont(new Font(fontName, 4, 24));
@@ -96,6 +99,7 @@ public class UIPanel extends JPanel implements GamePanel {
         this.setLayout(new BorderLayout());
         this.add(cardPanel, BorderLayout.CENTER);
         dealButton = new JButton("Deal");
+        dealButton.setFocusable(false);
         dealButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,6 +118,7 @@ public class UIPanel extends JPanel implements GamePanel {
                     betSpinner.getParent().revalidate();
 
                     dealButton.setVisible(false);
+                    buttonPanel.setVisible(false);
 
                     resultField.setVisible(false);
                     resultField.getParent().getParent().revalidate();
@@ -129,6 +134,7 @@ public class UIPanel extends JPanel implements GamePanel {
         buttonPanel.setLayout(new FlowLayout());
 
         JButton standButton = new JButton("Stand");
+        standButton.setFocusable(false);
         standButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -138,6 +144,7 @@ public class UIPanel extends JPanel implements GamePanel {
         });
 
         JButton hitButton = new JButton("Hit");
+        hitButton.setFocusable(false);
         hitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -148,6 +155,7 @@ public class UIPanel extends JPanel implements GamePanel {
         });
 
         doubleButton = new JButton("Double Down");
+        doubleButton.setFocusable(false);
         doubleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -160,6 +168,7 @@ public class UIPanel extends JPanel implements GamePanel {
                     betField.revalidate();
 
                     doubleDown = true;
+                    buttonPanel.revalidate();
                     buttonPanel.setVisible(false);
                     gameLogic.doubleDown();
                 }
@@ -177,9 +186,11 @@ public class UIPanel extends JPanel implements GamePanel {
         buttonPanel.add(doubleButton);
         doubleButton.setVisible(false);
 
+        buttonPanel.setBackground(Palette.ALT_BACKGROUND_COLOR);
         buttonPanel.add(betPanel);
 
         this.add(buttonPanel, BorderLayout.PAGE_END);
+        buttonPanel.revalidate();
         buttonPanel.setVisible(true);
         buttonPanel.revalidate();
 
@@ -188,19 +199,21 @@ public class UIPanel extends JPanel implements GamePanel {
     }
 
     public void offerChoice() {
-        this.buttonPanel.setVisible(true);
-        for(Component c : buttonPanel.getComponents())
+        for(Component c : buttonPanel.getComponents()) {
             c.setVisible(true);
+        }
+        betPanel.setVisible(false);
         if(playerHasHit)
             doubleButton.setVisible(false);
         dealButton.setVisible(false);
         buttonPanel.revalidate();
+        buttonPanel.setVisible(true);
     }
     public void setDealResult(int balanceChange, Logic.EndStates endState){
         String labelMessage = endState.label;
         Color labelColor;
-        Color loseMessageColor = new Color(242, 73, 73);
-        Color winMessageColor = new Color(38, 210, 87);
+        Color loseMessageColor = Palette.NEGATIVE_FONT_COLOR;
+        Color winMessageColor = Palette.POSITIVE_FONT_COLOR;
 
         balance += balanceChange;
         playerModel.setMoney(playerModel.getMoney() + balanceChange + currentBet);
@@ -209,7 +222,7 @@ public class UIPanel extends JPanel implements GamePanel {
         if(endState == Logic.EndStates.PlayerWins || endState == Logic.EndStates.DealerBust) {
             labelColor = winMessageColor;
         } else if (endState == Logic.EndStates.Tie) {
-            labelColor = Color.YELLOW;
+            labelColor = Palette.DEFAULT_FONT_COLOR;
         } else {
             labelColor = loseMessageColor;
         }
@@ -222,11 +235,11 @@ public class UIPanel extends JPanel implements GamePanel {
 
         balanceField.setText(" Balance: " + balance + "$\t\t");
         if(balance > 0)
-            balanceField.setForeground(new Color(38, 210, 87));
+            balanceField.setForeground(Palette.POSITIVE_FONT_COLOR);
         else if (balance == 0)
             balanceField.setForeground(Color.YELLOW);
         else
-            balanceField.setForeground(new Color(242, 73, 73));
+            balanceField.setForeground(Palette.NEGATIVE_FONT_COLOR);
 
         balanceField.revalidate();
 
@@ -235,11 +248,11 @@ public class UIPanel extends JPanel implements GamePanel {
 
         if(playerModel.getMoney() == 0)
             //todo
-            System.out.println("yer done");
-
+            ;
         moneyField.setText("$" + playerModel.getMoney());
         moneyField.getParent().revalidate();
 
+        buttonPanel.revalidate();
         buttonPanel.setVisible(true);
         for(Component c : buttonPanel.getComponents())
             c.setVisible(false);
