@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -21,8 +19,8 @@ public class CardPanel extends JPanel {
     private int cardWidth = 209;
     private int cardHeight = 303;
     private int balanceChange;
-    private Logic.EndStates dealEndState;
-    private int waitTimeBetweenDealerActions = 500;
+    private GameLogic.EndStates dealEndState;
+    private int waitTimeBetweenDealerActions = 50;
     private UIPanel uiPanel;
     private AudioPlayer cardFlipPlayer = new AudioPlayer("flipcard.wav");
 
@@ -65,7 +63,7 @@ public class CardPanel extends JPanel {
             if (cardVisual != null) {
                 cardFlipPlayer.playOnce();
                 cardVisuals.add(cardVisual);
-                if (cardVisual.dealtTo == Logic.CardDealtTo.Player) {
+                if (cardVisual.dealtTo == GameLogic.CardDealtTo.Player) {
                     cardVisual.moveTo(nextPlayerCardX, nextPlayerCardY);
                     nextPlayerCardX += cardWidth / 2;
                 } else {
@@ -78,7 +76,7 @@ public class CardPanel extends JPanel {
         cardVisuals.clear();
         resetCardBases();
     }
-    public void fireCardDeal(boolean isHidden, Card card, Logic.CardDealtTo cardDealtTo) {
+    public void fireCardDeal(boolean isHidden, Card card, GameLogic.CardDealtTo cardDealtTo) {
         CardVisual cardVisual = new CardVisual(card, deckX, deckY, this, isHidden, cardDealtTo);
         cardVisualsToBeDealt.add(cardVisual);
         executionQueue.add(cardDealAction);
@@ -89,7 +87,7 @@ public class CardPanel extends JPanel {
     public void fireRevealDealerHiddenCard(){
         executionQueue.add(revealHiddenCardAction);
     }
-    public void fireDealResult(int balanceChange, Logic.EndStates endState){
+    public void fireDealResult(int balanceChange, GameLogic.EndStates endState){
         this.balanceChange = balanceChange;
         this.dealEndState = endState;
         executionQueue.add(dealResultAction);
@@ -124,7 +122,7 @@ public class CardPanel extends JPanel {
         resetCardBases();
 
         for(CardVisual cardVisual : cardVisuals){
-            if(cardVisual.dealtTo == Logic.CardDealtTo.Player){
+            if(cardVisual.dealtTo == GameLogic.CardDealtTo.Player){
                 cardVisual.x = nextPlayerCardX;
                 cardVisual.y = nextPlayerCardY;
                 nextPlayerCardX += cardWidth / 2;

@@ -1,15 +1,17 @@
 package Modes.Blackjack;
 
-import java.awt.*;
 import java.util.ArrayList;
 import Logic.Card;
+import Logic.Values;
 
-public class Logic {
+public class GameLogic {
     private Card[] deck;
     private int deckIndex = 0;
     private ArrayList<Card> dealerHand = new ArrayList<>();
     private ArrayList<Card> playerHand = new ArrayList<>();
     private CardPanel cardPanel;
+    private boolean useStrategyTable = false;
+    private StrategyTableModel strategyTableModel;
     public enum CardDealtTo {
         Player, Dealer
     }
@@ -25,9 +27,10 @@ public class Logic {
     private static final int deckAmount = 6;
     private int bet;
 
-    public Logic(CardPanel cardPanel){
+    public GameLogic(CardPanel cardPanel,StrategyTableModel strategyTableModel){
         this.cardPanel = cardPanel;
         this.deck = Card.getShoe(deckAmount);
+        this.strategyTableModel = strategyTableModel;
     }
 
     public void setBet(int bet) {
@@ -52,11 +55,9 @@ public class Logic {
         int score = 0;
         int maxValueAces = 0;
         for (Card card : hand) {
-            if (card.value.value < 8)
-                score += card.value.value + 2;
-            else if (card.value.value < 12) {
-                score += 10;
-            } else {
+            if (card.value.value <= 10)
+                score += card.value.value;
+            else {
                 maxValueAces++;
                 score += 11;
             }
@@ -92,7 +93,26 @@ public class Logic {
                 cardPanel.fireDealResult(bet, EndStates.PlayerWins);
             }
         } else
-            cardPanel.fireOfferChoice();
+            if(!useStrategyTable)
+                cardPanel.fireOfferChoice();
+            else {
+                StrategyTableModel.Action action;
+                if(playerHand.stream().anyMatch((c) -> c.value == Values.Ace))
+                    action = strategyTableModel.getAction(-(playerScore - 11), dealerHand.get(0).value.value);
+                else
+                    action = strategyTableModel.getAction(playerScore, dealerHand.get(0).value.value);
+                switch (action){
+                    case Hit:
+                        hit();
+                        break;
+                    case Stand:
+                        stand();
+                        break;
+                    default:
+                        doubleDown();
+                        break;
+                }
+            }
     }
 
     public void stand(){
@@ -119,7 +139,26 @@ public class Logic {
         } else if(playerScore == 21) {
             stand();
         } else {
-            cardPanel.fireOfferChoice();
+            if(!useStrategyTable)
+                cardPanel.fireOfferChoice();
+            else {
+                StrategyTableModel.Action action;
+                if(playerHand.stream().anyMatch((c) -> c.value == Values.Ace))
+                    action = strategyTableModel.getAction(-(playerScore - 11), dealerHand.get(0).value.value);
+                else
+                    action = strategyTableModel.getAction(playerScore, dealerHand.get(0).value.value);
+                switch (action){
+                    case Hit:
+                        hit();
+                        break;
+                    case Stand:
+                        stand();
+                        break;
+                    default:
+                        doubleDown();
+                        break;
+                }
+            }
         }
     }
 
@@ -162,5 +201,16 @@ public class Logic {
         } else {
             cardPanel.fireDealResult(0, EndStates.Tie);
         }
+        //if(useStrategyTable){
+            //deal();
+        //}
+    }
+
+    public void setUseStrategyTable(boolean useStrategyTable) {
+        this.useStrategyTable = useStrategyTable;
+    }
+
+    public boolean isUsingStrategyTable() {
+        return useStrategyTable;
     }
 }

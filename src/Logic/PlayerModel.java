@@ -29,13 +29,12 @@ public class PlayerModel implements Serializable {
                     ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                     while ((playerModel = (PlayerModel) objectInputStream.readObject()) != null) {
                         players.add(playerModel);
-                        System.out.println("added player: " + playerModel.getName());
                     }
                 } catch (EOFException e){
-                    System.out.println("end of file");
+                    ;
                 }
             } else {
-                System.out.println("no existing save file - brand new one created");
+                ;
             }
 
         } catch (IOException | ClassNotFoundException e){
@@ -49,7 +48,6 @@ public class PlayerModel implements Serializable {
         try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
             for(PlayerModel playerModel : PlayerModel.players) {
                 out.writeObject(playerModel);
-                System.out.println("saved player " + playerModel.getName());
             }
         } catch (IOException e) {
             e.printStackTrace();

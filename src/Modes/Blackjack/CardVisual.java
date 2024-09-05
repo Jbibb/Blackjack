@@ -1,16 +1,14 @@
 package Modes.Blackjack;
 
 import Logic.Card;
-import javax.swing.*;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 class CardVisual {
     public Card card;
     public boolean isHidden;
     public boolean isMoving;
-    public Logic.CardDealtTo dealtTo;
+    public GameLogic.CardDealtTo dealtTo;
     public int x, y;
     public int destinationX, destinationY;
     private int animationLength = 100;
@@ -53,7 +51,7 @@ class CardVisual {
             }
         }});
 
-    public CardVisual(Card card, int x, int y, Component parent, boolean isHidden, Logic.CardDealtTo dealtTo){
+    public CardVisual(Card card, int x, int y, Component parent, boolean isHidden, GameLogic.CardDealtTo dealtTo){
         this.card = card;
         this.x = x;
         this.y = y;

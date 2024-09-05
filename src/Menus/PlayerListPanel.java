@@ -23,7 +23,7 @@ public class PlayerListPanel extends JPanel {
                 //super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 JPanel panel = new JPanel();
                 if(!isSelected)
-                    panel.setBackground(index % 2 == 0 ? new Color(34, 139, 34) : new Color(45, 173, 23));
+                    panel.setBackground(index % 2 == 0 ? Palette.HIGHLIGHT_COLOR : Palette.ALT_HIGHLIGHT_COLOR);
                 else
                     panel.setBackground(new Color(170, 245, 83));
                 panel.setLayout(new GridLayout(0, 3));
@@ -68,7 +68,7 @@ public class PlayerListPanel extends JPanel {
         jList.setModel(listModel);
         jList.setCellRenderer(cellRenderer);
 
-        add(jList);
+        add(new JScrollPane(jList));
 
         newNameField = new JTextField();
         newNameField.setPreferredSize(new Dimension(100, 50));

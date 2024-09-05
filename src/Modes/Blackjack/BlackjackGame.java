@@ -5,8 +5,13 @@ import javax.swing.*;
 import Logic.PlayerModel;
 
 public class BlackjackGame extends GameMode {
+    private StrategyTableModel strategyTableModel;
 
     public BlackjackGame() {}
+
+    public void setStrategyTableModel(StrategyTableModel strategyTableModel){
+        this.strategyTableModel = strategyTableModel;
+    }
 
     @Override
     public String getName(){
@@ -20,6 +25,6 @@ public class BlackjackGame extends GameMode {
 
     @Override
     public JPanel getGamePanel() {
-        return new UIPanel(this.playerModel);
+        return new UIPanel(this.playerModel, strategyTableModel);
     }
 }

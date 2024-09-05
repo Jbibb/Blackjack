@@ -1,6 +1,9 @@
 package Menus;
 
 import Logic.PlayerModel;
+import Modes.Blackjack.BlackjackGame;
+import Modes.Blackjack.StrategyTable;
+import Modes.Blackjack.StrategyTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +19,11 @@ public class MainWindow extends JFrame implements Runnable {
     private PlayerInfoPanel playerInfoPanel;
     private GameSession currentGameSession = null;
 
+    private PlayerListPanel playerListPanel = new PlayerListPanel();
+    private ModeChoicePanel modeChoicePanel = new ModeChoicePanel(this, playerListPanel);
+    private JScrollPane strategyTableJScrollPane;
+    private StrategyTableModel strategyTableModel;
+
     @Override
     public void run(){
         getContentPane().setLayout(new BorderLayout());
@@ -24,6 +32,7 @@ public class MainWindow extends JFrame implements Runnable {
         contentPanel.setLayout(new BorderLayout());
 
         getContentPane().add(contentPanel, BorderLayout.CENTER);
+        getContentPane().setBackground(Palette.BACKGROUND_COLOR);
 
         returnButton = new JButton("Return");
         returnButton.setFocusable(false);
@@ -36,8 +45,12 @@ public class MainWindow extends JFrame implements Runnable {
 
         playerInfoPanel = new PlayerInfoPanel(returnButton);
         getContentPane().add(playerInfoPanel, BorderLayout.NORTH);
-
         contentPanel.setBackground(Palette.BACKGROUND_COLOR);
+
+        StrategyTable strategyTable = new Modes.Blackjack.StrategyTable();
+        strategyTableModel = strategyTable.getModel();
+        strategyTableJScrollPane = new JScrollPane(strategyTable);
+        strategyTableJScrollPane.setBackground(Palette.BACKGROUND_COLOR);
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -54,6 +67,8 @@ public class MainWindow extends JFrame implements Runnable {
         this.repaint();
     }
 
+
+
     public void goToGameChoice() {
         if(currentGameSession != null) {
             currentGameSession.end();
@@ -61,10 +76,9 @@ public class MainWindow extends JFrame implements Runnable {
         returnButton.setVisible(false);
         this.contentPanel.removeAll();
 
-        PlayerListPanel playerListPanel = new PlayerListPanel();
-        this.contentPanel.add(new ModeChoicePanel(this, playerListPanel), BorderLayout.NORTH);
+        this.contentPanel.add(modeChoicePanel, BorderLayout.NORTH);
         this.contentPanel.add(playerListPanel, BorderLayout.SOUTH);
-
+        contentPanel.add(strategyTableJScrollPane, BorderLayout.CENTER);
         playerInfoPanel.setPlayerModel(null);
         this.revalidate();
         this.repaint();
@@ -76,5 +90,9 @@ public class MainWindow extends JFrame implements Runnable {
 
     public void setPlayerModel(PlayerModel playerModel) {
         playerInfoPanel.setPlayerModel(playerModel);
+    }
+
+    public StrategyTableModel getStrategyTableModel() {
+        return strategyTableModel;
     }
 }

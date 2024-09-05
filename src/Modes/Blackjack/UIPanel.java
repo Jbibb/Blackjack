@@ -14,12 +14,13 @@ import Modes.GamePanel;
 
 public class UIPanel extends JPanel implements GamePanel {
     private String fontName = "Verdana";
-    private Logic gameLogic;
+    private GameLogic gameLogic;
     private JPanel buttonPanel;
     private JButton dealButton, doubleButton;
     private JPanel betPanel;
     private JPanel pageStartPanel;
     private JTextField moneyField, betField, balanceField;
+    private JCheckBox strategyTableCheckbox;
     private JSpinner betSpinner;
     private int balance = 0;
     private boolean doubleDown = false;
@@ -28,7 +29,7 @@ public class UIPanel extends JPanel implements GamePanel {
     private JTextField resultField;
     public PlayerModel playerModel;
     private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
-    public UIPanel(PlayerModel playerModel) {
+    public UIPanel(PlayerModel playerModel, StrategyTableModel strategyTableModel) {
         this.playerModel = playerModel;
         FlowLayout flowLayout = new FlowLayout();
         flowLayout.setAlignment(FlowLayout.LEFT);
@@ -74,13 +75,26 @@ public class UIPanel extends JPanel implements GamePanel {
         resultField.setFont(new Font(fontName, 4, 24));
         resultField.setEditable(false);
 
+        strategyTableCheckbox = new JCheckBox("Toggle automatic play");
+        strategyTableCheckbox.setBackground(Palette.BACKGROUND_COLOR);
+        strategyTableCheckbox.setForeground(Palette.DEFAULT_FONT_COLOR);
+        strategyTableCheckbox.setFont(Palette.DEFAULT_FONT);
+        strategyTableCheckbox.setFocusable(false);
+        strategyTableCheckbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameLogic.setUseStrategyTable(strategyTableCheckbox.isSelected());
+            }
+        });
+
         pageStartPanel.add(moneyField);
         pageStartPanel.add(betField);
         pageStartPanel.add(balanceField);
         pageStartPanel.add(resultField);
+        pageStartPanel.add(strategyTableCheckbox);
 
         CardPanel cardPanel = new CardPanel(this);
-        gameLogic = new Logic(cardPanel);
+        gameLogic = new GameLogic(cardPanel, strategyTableModel);
         addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -103,30 +117,7 @@ public class UIPanel extends JPanel implements GamePanel {
         dealButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int spinnerBetValue = (Integer)(betSpinner.getValue());
-                if(spinnerBetValue <= playerModel.getMoney()) {
-                    currentBet = spinnerBetValue;
-                    playerModel.setMoney(playerModel.getMoney() - currentBet);
-
-                    moneyField.setText("$" + playerModel.getMoney());
-                    moneyField.revalidate();
-
-                    betField.setText(" Current bet: $" + currentBet);
-                    betField.revalidate();
-
-                    betSpinner.setVisible(false);
-                    betSpinner.getParent().revalidate();
-
-                    dealButton.setVisible(false);
-                    buttonPanel.setVisible(false);
-
-                    resultField.setVisible(false);
-                    resultField.getParent().getParent().revalidate();
-                    resultField.getParent().revalidate();
-
-                    gameLogic.setBet(currentBet);
-                    gameLogic.deal();
-                }
+                newDeal();
             }
         });
 
@@ -198,6 +189,33 @@ public class UIPanel extends JPanel implements GamePanel {
         backgroundMusicPlayer.play();
     }
 
+    private void newDeal() {
+        int spinnerBetValue = (Integer)(betSpinner.getValue());
+        if(spinnerBetValue <= playerModel.getMoney()) {
+            currentBet = spinnerBetValue;
+            playerModel.setMoney(playerModel.getMoney() - currentBet);
+
+            moneyField.setText("$" + playerModel.getMoney());
+            moneyField.revalidate();
+
+            betField.setText(" Current bet: $" + currentBet);
+            betField.revalidate();
+
+            betSpinner.setVisible(false);
+            betSpinner.getParent().revalidate();
+
+            dealButton.setVisible(false);
+            buttonPanel.setVisible(false);
+
+            resultField.setVisible(false);
+            resultField.getParent().getParent().revalidate();
+            resultField.getParent().revalidate();
+
+            gameLogic.setBet(currentBet);
+            gameLogic.deal();
+        }
+    }
+
     public void offerChoice() {
         for(Component c : buttonPanel.getComponents()) {
             c.setVisible(true);
@@ -209,7 +227,7 @@ public class UIPanel extends JPanel implements GamePanel {
         buttonPanel.revalidate();
         buttonPanel.setVisible(true);
     }
-    public void setDealResult(int balanceChange, Logic.EndStates endState){
+    public void setDealResult(int balanceChange, GameLogic.EndStates endState){
         String labelMessage = endState.label;
         Color labelColor;
         Color loseMessageColor = Palette.NEGATIVE_FONT_COLOR;
@@ -219,9 +237,9 @@ public class UIPanel extends JPanel implements GamePanel {
         playerModel.setMoney(playerModel.getMoney() + balanceChange + currentBet);
 
         resultField.setText(labelMessage);
-        if(endState == Logic.EndStates.PlayerWins || endState == Logic.EndStates.DealerBust) {
+        if(endState == GameLogic.EndStates.PlayerWins || endState == GameLogic.EndStates.DealerBust) {
             labelColor = winMessageColor;
-        } else if (endState == Logic.EndStates.Tie) {
+        } else if (endState == GameLogic.EndStates.Tie) {
             labelColor = Palette.DEFAULT_FONT_COLOR;
         } else {
             labelColor = loseMessageColor;
@@ -247,20 +265,23 @@ public class UIPanel extends JPanel implements GamePanel {
         playerHasHit = false;
 
         if(playerModel.getMoney() == 0)
+            System.out.println("yer done");
             //todo
-            ;
         moneyField.setText("$" + playerModel.getMoney());
         moneyField.getParent().revalidate();
 
-        buttonPanel.revalidate();
-        buttonPanel.setVisible(true);
-        for(Component c : buttonPanel.getComponents())
-            c.setVisible(false);
-        dealButton.setVisible(true);
-        betPanel.setVisible(true);
-        betSpinner.setVisible(true);
-
-        betPanel.revalidate();
+        if(!gameLogic.isUsingStrategyTable()) {
+            buttonPanel.revalidate();
+            buttonPanel.setVisible(true);
+            for (Component c : buttonPanel.getComponents())
+                c.setVisible(false);
+            dealButton.setVisible(true);
+            betPanel.setVisible(true);
+            betSpinner.setVisible(true);
+            betPanel.revalidate();
+        } else {
+            newDeal();
+        }
 
         resultField.setVisible(true);
     }
@@ -268,5 +289,6 @@ public class UIPanel extends JPanel implements GamePanel {
     @Override
     public void end() {
         backgroundMusicPlayer.stop();
+        gameLogic.setUseStrategyTable(false);
     }
 }
