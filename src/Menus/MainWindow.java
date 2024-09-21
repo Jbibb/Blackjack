@@ -49,8 +49,13 @@ public class MainWindow extends JFrame implements Runnable {
 
         StrategyTable strategyTable = new Modes.Blackjack.StrategyTable();
         strategyTableModel = strategyTable.getModel();
+
         strategyTableJScrollPane = new JScrollPane(strategyTable);
+        strategyTable.setAlignmentX(Component.CENTER_ALIGNMENT);
         strategyTableJScrollPane.setBackground(Palette.BACKGROUND_COLOR);
+        strategyTableJScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        strategyTableJScrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
+
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -65,6 +70,8 @@ public class MainWindow extends JFrame implements Runnable {
         this.contentPanel.add(gameSession.getGamePanel(), BorderLayout.CENTER);
         this.revalidate();
         this.repaint();
+        gameSession.getGamePanel().scale();
+
     }
 
 

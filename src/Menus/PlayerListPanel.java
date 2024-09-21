@@ -68,11 +68,16 @@ public class PlayerListPanel extends JPanel {
         jList.setModel(listModel);
         jList.setCellRenderer(cellRenderer);
 
+        setLayout(new GridLayout(2,1));
         add(new JScrollPane(jList));
+        jList.setFixedCellWidth(700);
+
+        JPanel addPanel = new JPanel();
+        addPanel.setBackground(Palette.ALT_BACKGROUND_COLOR);
 
         newNameField = new JTextField();
         newNameField.setPreferredSize(new Dimension(100, 50));
-        add(newNameField);
+        addPanel.add(newNameField);
 
         JButton addButton = new JButton("Add new player");
         addButton.setFocusable(false);
@@ -90,7 +95,8 @@ public class PlayerListPanel extends JPanel {
                 }
             }
         });
-        add(addButton);
+        addPanel.add(addButton);
+        add(addPanel);
 
         setBackground(Palette.ALT_BACKGROUND_COLOR);
     }

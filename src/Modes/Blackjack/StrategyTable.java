@@ -3,12 +3,15 @@ package Modes.Blackjack;
 import Menus.Palette;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 public class StrategyTable extends JTable {
     private JTable table = this;
@@ -54,6 +57,25 @@ public class StrategyTable extends JTable {
             table.getTableHeader().setBackground(Palette.HIGHLIGHT_COLOR);
             table.getTableHeader().setForeground(Palette.DEFAULT_FONT_COLOR);
             table.getTableHeader().setFont(Palette.HEADER_FONT);
+
+            TableCellRenderer defaultRenderer = table.getTableHeader().getDefaultRenderer();
+            table.getTableHeader().setDefaultRenderer(new TableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    if(column == 0) {
+
+                        JPanel panel = new JPanel(new BorderLayout());
+                        panel.setBackground(Palette.HIGHLIGHT_COLOR);
+                        Component component = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                        component.setPreferredSize(new Dimension(50, 50));
+                        panel.add(component, BorderLayout.LINE_END);
+                        return panel;
+
+                    } else {
+                        return defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    }
+                }
+            });
             column.setCellRenderer(new TableCellRenderer() {
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -94,6 +116,37 @@ public class StrategyTable extends JTable {
 
         }
 
+        addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                setRowHeight(50);
+                TableColumn column = getColumnModel().getColumn(0);
+                column.setPreferredWidth(100);
+                column.setMinWidth(100);
+                column.setMaxWidth(100);
+                for(int i = 1; i < getColumnModel().getColumnCount(); i++){
+                    column = getColumnModel().getColumn(i);
+                    column.setPreferredWidth(50);
+                    column.setMinWidth(50);
+                    column.setMaxWidth(50);
+                }
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+
+            }
+        });
     }
 
     @Override

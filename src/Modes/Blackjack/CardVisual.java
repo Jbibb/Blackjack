@@ -11,7 +11,7 @@ class CardVisual {
     public GameLogic.CardDealtTo dealtTo;
     public int x, y;
     public int destinationX, destinationY;
-    private int animationLength = 100;
+    private int animationLength = 120;
     private Component parent;
     private int frameTime = 8;
 

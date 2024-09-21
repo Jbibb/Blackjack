@@ -1,9 +1,6 @@
 package Modes.Blackjack;
 import Modes.GameMode;
 
-import javax.swing.*;
-import Logic.PlayerModel;
-
 public class BlackjackGame extends GameMode {
     private StrategyTableModel strategyTableModel;
 
@@ -24,7 +21,7 @@ public class BlackjackGame extends GameMode {
 
 
     @Override
-    public JPanel getGamePanel() {
-        return new UIPanel(this.playerModel, strategyTableModel);
+    public UIPanel getGamePanel(int width, int height) {
+        return new UIPanel(this.playerModel, strategyTableModel, width, height);
     }
 }

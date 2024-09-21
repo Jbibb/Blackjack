@@ -1,19 +1,18 @@
 package Menus;
 
+import Modes.Blackjack.UIPanel;
 import Modes.GameMode;
 import Modes.GamePanel;
 
-import javax.swing.*;
-
 public class GameSession {
     private GameMode gameMode;
-    private JPanel gamePanel;
-    public GameSession(GameMode gameMode, JPanel gamePanel){
+    private UIPanel gamePanel;
+    public GameSession(GameMode gameMode, UIPanel gamePanel){
         this.gameMode = gameMode;
         this.gamePanel = gamePanel;
     }
 
-    public JPanel getGamePanel(){
+    public UIPanel getGamePanel(){
         return gamePanel;
     }
 

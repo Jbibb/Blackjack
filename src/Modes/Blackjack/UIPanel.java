@@ -12,55 +12,101 @@ import Logic.PlayerModel;
 import Menus.Palette;
 import Modes.GamePanel;
 
-public class UIPanel extends JPanel implements GamePanel {
-    private String fontName = "Verdana";
+public class UIPanel extends JLayeredPane implements GamePanel {
     private GameLogic gameLogic;
-    private JPanel buttonPanel;
-    private JButton dealButton, doubleButton;
-    private JPanel betPanel;
-    private JPanel pageStartPanel;
-    private JTextField moneyField, betField, balanceField;
-    private JCheckBox strategyTableCheckbox;
-    private JSpinner betSpinner;
     private int balance = 0;
     private boolean doubleDown = false;
     private boolean playerHasHit = false;
     private int currentBet = 0;
-    private JTextField resultField;
     public PlayerModel playerModel;
-    private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
-    public UIPanel(PlayerModel playerModel, StrategyTableModel strategyTableModel) {
-        this.playerModel = playerModel;
-        FlowLayout flowLayout = new FlowLayout();
-        flowLayout.setAlignment(FlowLayout.LEFT);
-        pageStartPanel = new JPanel(flowLayout);
 
+    private String fontName = "Verdana";
+
+    private JLayeredPane layeredPane = this;
+    private JPanel borderPanel;
+
+    private JPanel betPanel;
+    private JPanel buttonPanel;
+    private JSpinner betSpinner;
+    private JButton dealButton, doubleButton;
+
+    private JPanel pageStartPanel;
+
+    private JPanel leftPageStartPanel;
+    private JTextField moneyField, betField, balanceField;
+    private JTextField resultField;
+
+    private JPanel resultPanel;
+
+    private JPanel rightPageStartPanel;
+
+
+    private JButton settingsButton;
+    private JPanel settingsPanel;
+    private JCheckBox strategyTableCheckbox;
+    private JSpinner delaySpinner;
+    private JButton applyDelayButton;
+
+
+
+    private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
+
+
+    public UIPanel(PlayerModel playerModel, StrategyTableModel strategyTableModel, int width, int height) {
+        this.playerModel = playerModel;
+
+        borderPanel = new JPanel(new BorderLayout());
+        this.add(borderPanel, DEFAULT_LAYER);
+
+        pageStartPanel = new JPanel(new BorderLayout());
         pageStartPanel.setBackground(Palette.BACKGROUND_COLOR);
 
-        moneyField = new JTextField();
-        moneyField.setBorder(BorderFactory.createEmptyBorder());
-        moneyField.setEditable(false);
-        moneyField.setText("$" + playerModel.getMoney());
-        moneyField.setFont(new Font(fontName, Font.BOLD, 22));
-        moneyField.setForeground(Color.YELLOW);
-        moneyField.setBackground(Palette.BACKGROUND_COLOR);
+        FlowLayout flowLayout = new FlowLayout();
+        flowLayout.setAlignment(FlowLayout.LEFT);
+        leftPageStartPanel = new JPanel(flowLayout);
+        leftPageStartPanel.setBackground(Palette.BACKGROUND_COLOR);
 
-        betField = new JTextField();
-        betField.setBorder(BorderFactory.createEmptyBorder());
-        betField.setEditable(false);
-        betField.setText(" Current bet: $" + currentBet);
-        betField.setFont(new Font(fontName, 3, 16));
-        betField.setForeground(Color.ORANGE);
-        betField.setBackground(Palette.BACKGROUND_COLOR);
+        flowLayout = new FlowLayout();
+        flowLayout.setAlignment(FlowLayout.RIGHT);
+        rightPageStartPanel = new JPanel(flowLayout);
+        rightPageStartPanel.setBackground(Palette.BACKGROUND_COLOR);
 
-        balanceField = new JTextField();
-        balanceField.setBorder(BorderFactory.createEmptyBorder());
-        balanceField.setEditable(false);
-        balanceField.setText(" Balance: " + balance + "$\t\t");
-        balanceField.setFont(new Font(fontName, 3, 16));
-        balanceField.setForeground(Color.YELLOW);
-        balanceField.setBackground(Palette.BACKGROUND_COLOR);
+        resultPanel = new JPanel(new BorderLayout());
+        resultPanel.setBackground(Palette.BACKGROUND_COLOR);
 
+        pageStartPanel.add(leftPageStartPanel, BorderLayout.LINE_START);
+        pageStartPanel.add(rightPageStartPanel, BorderLayout.LINE_END);
+
+        add(resultPanel, POPUP_LAYER);
+        resultPanel.setBounds(width/2 - 300, height/2 - 100, 300, 100);
+
+
+        {
+            moneyField = new JTextField();
+            moneyField.setBorder(BorderFactory.createEmptyBorder());
+            moneyField.setEditable(false);
+            moneyField.setText("$" + playerModel.getMoney());
+            moneyField.setFont(new Font(fontName, Font.BOLD, 22));
+            moneyField.setForeground(Color.YELLOW);
+            moneyField.setBackground(Palette.BACKGROUND_COLOR);
+
+            betField = new JTextField();
+            betField.setBorder(BorderFactory.createEmptyBorder());
+            betField.setEditable(false);
+            betField.setText(" Current bet: $" + currentBet);
+            betField.setFont(new Font(fontName, 3, 16));
+            betField.setForeground(Color.ORANGE);
+            betField.setBackground(Palette.BACKGROUND_COLOR);
+
+            balanceField = new JTextField();
+            balanceField.setBorder(BorderFactory.createEmptyBorder());
+            balanceField.setEditable(false);
+            balanceField.setText(" Balance: " + balance + "$\t\t");
+            balanceField.setFont(new Font(fontName, 3, 16));
+            balanceField.setForeground(Color.YELLOW);
+            balanceField.setBackground(Palette.BACKGROUND_COLOR);
+        }
+        {
         betPanel = new JPanel();
         betPanel.setLayout(new FlowLayout());
 
@@ -73,10 +119,11 @@ public class UIPanel extends JPanel implements GamePanel {
         resultField.setBorder(BorderFactory.createEmptyBorder());
         resultField.setForeground(Color.ORANGE);
         resultField.setFont(new Font(fontName, 4, 24));
+        resultField.setHorizontalAlignment(SwingConstants.CENTER);
         resultField.setEditable(false);
 
         strategyTableCheckbox = new JCheckBox("Toggle automatic play");
-        strategyTableCheckbox.setBackground(Palette.BACKGROUND_COLOR);
+        strategyTableCheckbox.setBackground(Palette.HIGHLIGHT_COLOR);
         strategyTableCheckbox.setForeground(Palette.DEFAULT_FONT_COLOR);
         strategyTableCheckbox.setFont(Palette.DEFAULT_FONT);
         strategyTableCheckbox.setFocusable(false);
@@ -86,18 +133,52 @@ public class UIPanel extends JPanel implements GamePanel {
                 gameLogic.setUseStrategyTable(strategyTableCheckbox.isSelected());
             }
         });
+        }
 
-        pageStartPanel.add(moneyField);
-        pageStartPanel.add(betField);
-        pageStartPanel.add(balanceField);
-        pageStartPanel.add(resultField);
-        pageStartPanel.add(strategyTableCheckbox);
+        settingsPanel = new JPanel();
+        this.add(settingsPanel, POPUP_LAYER);
+        settingsPanel.setBounds(50, 50, 250, 100);
+        settingsPanel.setBackground(Palette.HIGHLIGHT_COLOR);
+        settingsPanel.setBorder(BorderFactory.createLineBorder(Palette.ALT_BACKGROUND_COLOR));
+        settingsPanel.setVisible(false);
 
-        CardPanel cardPanel = new CardPanel(this);
+
+        settingsButton = new JButton("Settings");
+        settingsButton.setHorizontalAlignment(SwingConstants.RIGHT);
+        settingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                settingsPanel.setVisible(!settingsPanel.isVisible());
+            }
+        });
+
+        delaySpinner = new JSpinner(new SpinnerNumberModel(350, 0, 2_000, 10));
+        applyDelayButton = new JButton("Apply");
+
+        JLabel delayLabel = new JLabel("Set delay between dealer actions (ms)");
+        delayLabel.setBackground(Palette.HIGHLIGHT_COLOR);
+        delayLabel.setForeground(Palette.DEFAULT_FONT_COLOR);
+        delayLabel.setFont(new Font(fontName, Font.PLAIN, 12));
+
+        leftPageStartPanel.add(moneyField);
+        leftPageStartPanel.add(betField);
+        leftPageStartPanel.add(balanceField);
+
+        resultPanel.add(resultField, BorderLayout.CENTER);
+
+        rightPageStartPanel.add(settingsButton);
+
+        settingsPanel.add(strategyTableCheckbox);
+        settingsPanel.add(delayLabel);
+        settingsPanel.add(delaySpinner);
+        settingsPanel.add(applyDelayButton);
+
+        CardPanel cardPanel = new CardPanel(this, (Integer) delaySpinner.getModel().getValue());
         gameLogic = new GameLogic(cardPanel, strategyTableModel);
         addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
+                scale();
                 cardPanel.scale();
             }
             @Override
@@ -108,10 +189,16 @@ public class UIPanel extends JPanel implements GamePanel {
             public void componentHidden(ComponentEvent e) {}
         });
 
+        applyDelayButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardPanel.changeWaitTimeBetweenDealerActions((Integer) delaySpinner.getModel().getValue());
+            }
+        });
 
 
-        this.setLayout(new BorderLayout());
-        this.add(cardPanel, BorderLayout.CENTER);
+
+        borderPanel.add(cardPanel, BorderLayout.CENTER);
         dealButton = new JButton("Deal");
         dealButton.setFocusable(false);
         dealButton.addActionListener(new ActionListener() {
@@ -121,7 +208,7 @@ public class UIPanel extends JPanel implements GamePanel {
             }
         });
 
-        this.buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
         JButton standButton = new JButton("Stand");
@@ -180,12 +267,12 @@ public class UIPanel extends JPanel implements GamePanel {
         buttonPanel.setBackground(Palette.ALT_BACKGROUND_COLOR);
         buttonPanel.add(betPanel);
 
-        this.add(buttonPanel, BorderLayout.PAGE_END);
+        borderPanel.add(buttonPanel, BorderLayout.PAGE_END);
         buttonPanel.revalidate();
         buttonPanel.setVisible(true);
         buttonPanel.revalidate();
 
-        this.add(pageStartPanel, BorderLayout.PAGE_START);
+        borderPanel.add(pageStartPanel, BorderLayout.PAGE_START);
         backgroundMusicPlayer.play();
     }
 
@@ -214,6 +301,14 @@ public class UIPanel extends JPanel implements GamePanel {
             gameLogic.setBet(currentBet);
             gameLogic.deal();
         }
+    }
+
+    public void scale(){
+        int width = layeredPane.getParent().getWidth();
+        int height = layeredPane.getParent().getHeight();
+        layeredPane.setBounds(0, 0, width, height);
+        borderPanel.setBounds(0, 0, width, height);
+        resultField.setBounds(width/2 - 250, height/2 - 100, 250, 100);
     }
 
     public void offerChoice() {

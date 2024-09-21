@@ -20,12 +20,13 @@ public class CardPanel extends JPanel {
     private int cardHeight = 303;
     private int balanceChange;
     private GameLogic.EndStates dealEndState;
-    private int waitTimeBetweenDealerActions = 50;
+    private int waitTimeBetweenDealerActions;
     private UIPanel uiPanel;
     private AudioPlayer cardFlipPlayer = new AudioPlayer("flipcard.wav");
 
     private int frameTime = 8;
-    public CardPanel(UIPanel uiPanel){
+    public CardPanel(UIPanel uiPanel, int waitTimeBetweenDealerActions){
+
         this.uiPanel = uiPanel;
         setBackground(Palette.BACKGROUND_COLOR);
         Timer repaintTimer = new Timer(frameTime, new ActionListener() {
@@ -36,7 +37,23 @@ public class CardPanel extends JPanel {
         });
 
         repaintTimer.start();
+
+        this.waitTimeBetweenDealerActions = waitTimeBetweenDealerActions;
+        executor = new Timer(waitTimeBetweenDealerActions, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Runnable runnable = executionQueue.poll();
+                if(runnable != null)
+                    runnable.run();
+            }
+        });
+
         executor.start();
+    }
+
+    public void changeWaitTimeBetweenDealerActions(int waitTime){
+        this.waitTimeBetweenDealerActions = waitTime;
+        executor.setDelay(waitTime);
     }
     private java.util.Queue<CardVisual> cardVisualsToBeDealt = new LinkedList<>();
     private java.util.Queue<Runnable> executionQueue = new LinkedList();
@@ -50,14 +67,7 @@ public class CardPanel extends JPanel {
     private final Runnable dealResultAction = () -> {
         uiPanel.setDealResult(balanceChange, dealEndState);
     };
-    private Timer executor = new Timer(waitTimeBetweenDealerActions, new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Runnable runnable = executionQueue.poll();
-            if(runnable != null)
-                runnable.run();
-        }
-    });
+    private Timer executor;
     private Runnable cardDealAction = () -> {
             CardVisual cardVisual = cardVisualsToBeDealt.poll();
             if (cardVisual != null) {

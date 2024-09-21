@@ -1,8 +1,7 @@
 package Modes;
 
 import Logic.PlayerModel;
-
-import javax.swing.*;
+import Modes.Blackjack.UIPanel;
 
 public abstract class GameMode {
     protected PlayerModel playerModel;
@@ -13,6 +12,5 @@ public abstract class GameMode {
 
     public abstract String getName();
     public abstract String getDescription();
-
-    public abstract JPanel getGamePanel();
+    public abstract UIPanel getGamePanel(int width, int height);
 }

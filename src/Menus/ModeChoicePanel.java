@@ -39,7 +39,7 @@ public class ModeChoicePanel extends JPanel {
 
                         if(gameMode instanceof BlackjackGame)
                             ((BlackjackGame) gameMode).setStrategyTableModel(mainWindow.getStrategyTableModel());
-                        GameSession gameSession = new GameSession(gameMode, gameMode.getGamePanel());
+                        GameSession gameSession = new GameSession(gameMode, gameMode.getGamePanel(mainWindow.getWidth(), mainWindow.getHeight()));
                         mainWindow.setCurrentGameSession(gameSession);
                         mainWindow.startGameSession(gameSession);
                     }
