@@ -77,8 +77,9 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         pageStartPanel.add(leftPageStartPanel, BorderLayout.LINE_START);
         pageStartPanel.add(rightPageStartPanel, BorderLayout.LINE_END);
 
-        add(resultPanel, POPUP_LAYER);
-        resultPanel.setBounds(width/2 - 300, height/2 - 100, 300, 100);
+        add(resultPanel, PALETTE_LAYER);
+        resultPanel.setOpaque(false);
+        resultPanel.setBounds(width/2, height/2, 100, 100);
 
 
         {
@@ -115,12 +116,13 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         betPanel.add(betSpinner);
 
         resultField = new JTextField();
-        resultField.setBackground(Palette.BACKGROUND_COLOR);
-        resultField.setBorder(BorderFactory.createEmptyBorder());
+        resultField.setBackground(Palette.ALT_BACKGROUND_COLOR);
+        resultField.setBorder(BorderFactory.createLineBorder(Palette.POSITIVE_FONT_COLOR));
         resultField.setForeground(Color.ORANGE);
-        resultField.setFont(new Font(fontName, 4, 24));
+        resultField.setFont(new Font(fontName, Font.PLAIN, 24));
         resultField.setHorizontalAlignment(SwingConstants.CENTER);
         resultField.setEditable(false);
+        resultField.setVisible(false);
 
         strategyTableCheckbox = new JCheckBox("Toggle automatic play");
         strategyTableCheckbox.setBackground(Palette.HIGHLIGHT_COLOR);
@@ -308,7 +310,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         int height = layeredPane.getParent().getHeight();
         layeredPane.setBounds(0, 0, width, height);
         borderPanel.setBounds(0, 0, width, height);
-        resultField.setBounds(width/2 - 250, height/2 - 100, 250, 100);
+        resultPanel.setBounds(width/2 - 75, height/2 - 100, 170, 100);
     }
 
     public void offerChoice() {
@@ -341,6 +343,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         }
 
         resultField.setForeground(labelColor);
+        resultField.setBorder(BorderFactory.createLineBorder(labelColor));
         resultField.setVisible(true);
         resultField.repaint();
         resultField.getParent().revalidate();
