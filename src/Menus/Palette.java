@@ -6,6 +6,7 @@ public abstract class Palette {
     public static Color BACKGROUND_COLOR = new Color(42, 94, 42);
     public static Color ALT_BACKGROUND_COLOR = new Color(25, 66, 25);
 
+    public static Color BORDER_COLOR = new Color(9, 49, 9);
     public static Color HIGHLIGHT_COLOR = new Color(34, 139, 34);
     public static Color ALT_HIGHLIGHT_COLOR =  new Color(45, 173, 23);
     public static Color DEFAULT_FONT_COLOR = new Color(236, 208, 78);

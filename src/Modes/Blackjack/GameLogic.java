@@ -43,12 +43,21 @@ public class GameLogic {
             deckIndex = 0;
         }
         Card card = deck[deckIndex++];
+
+        if(!isHidden)
+            Card.subtractFromShoe(card);
+
         if(cardDealtTo == CardDealtTo.Player)
             playerHand.add(card);
         else
             dealerHand.add(card);
 
         cardPanel.fireCardDeal(isHidden, card, cardDealtTo);
+    }
+
+    private void revealDealerCard(){
+        Card.subtractFromShoe(dealerHand.get(1));
+        cardPanel.fireRevealDealerHiddenCard();
     }
 
     private int evaluateHand(ArrayList<Card> hand) {
@@ -85,7 +94,8 @@ public class GameLogic {
         int playerScore = evaluateHand(playerHand);
 
         if(playerScore == -1) {
-            cardPanel.fireRevealDealerHiddenCard();
+            //cardPanel.fireRevealDealerHiddenCard();
+            revealDealerCard();
             int dealerScore = evaluateHand(dealerHand);
             if(dealerScore == -1){
                 cardPanel.fireDealResult(0, EndStates.Tie);
@@ -116,7 +126,8 @@ public class GameLogic {
     }
 
     public void stand(){
-        cardPanel.fireRevealDealerHiddenCard();
+        //cardPanel.fireRevealDealerHiddenCard();
+        revealDealerCard();
 
         int dealerScore = evaluateHand(dealerHand);
 
@@ -134,7 +145,8 @@ public class GameLogic {
         int playerScore = evaluateHand(playerHand);
 
         if(playerScore > 21) {
-            cardPanel.fireRevealDealerHiddenCard();
+            //cardPanel.fireRevealDealerHiddenCard();
+            revealDealerCard();
             dealResult();//cardPanel.fireDealResult(playerScore, 0);
         } else if(playerScore == 21) {
             stand();
@@ -167,7 +179,8 @@ public class GameLogic {
 
         dealCard(false, CardDealtTo.Player);
 
-        cardPanel.fireRevealDealerHiddenCard();
+        //cardPanel.fireRevealDealerHiddenCard();
+        revealDealerCard();
         int playerScore = evaluateHand(playerHand);
         if(playerScore > 21) {
             dealResult();//cardPanel.fireDealResult(playerScore, 0);
@@ -186,24 +199,13 @@ public class GameLogic {
     public void dealResult(){
         int playerScore = evaluateHand(playerHand);
         int dealerScore = evaluateHand(dealerHand);
-        if(playerScore == -1){
-            cardPanel.fireDealResult(bet, EndStates.PlayerWins);
-        } else if (dealerScore == -1){
-            cardPanel.fireDealResult(-bet, EndStates.DealerWins);
-        } else if (playerScore > 21){
-            cardPanel.fireDealResult(-bet, EndStates.PlayerBust);
-        } else if (dealerScore > 21){
-            cardPanel.fireDealResult(bet, EndStates.DealerBust);
-        } else if (playerScore > dealerScore){
-            cardPanel.fireDealResult(bet, EndStates.PlayerWins);
-        } else if (dealerScore > playerScore){
-            cardPanel.fireDealResult(-bet, EndStates.DealerWins);
-        } else {
+
+        if(playerScore == dealerScore || ((playerScore == -1 || playerScore == 21) && (dealerScore == -1 || dealerScore == 21)))
             cardPanel.fireDealResult(0, EndStates.Tie);
-        }
-        //if(useStrategyTable){
-            //deal();
-        //}
+        else if((playerScore <= 21 && playerScore > dealerScore) || dealerScore > 21)
+            cardPanel.fireDealResult(bet, EndStates.PlayerWins);
+        else
+            cardPanel.fireDealResult(-bet, EndStates.DealerWins);
     }
 
     public void setUseStrategyTable(boolean useStrategyTable) {
@@ -212,5 +214,43 @@ public class GameLogic {
 
     public boolean isUsingStrategyTable() {
         return useStrategyTable;
+    }
+
+    public String getTip(){
+        if(playerHand.size() >= 2 && dealerHand.size() >= 2) {
+            int playerScore = evaluateHand(playerHand);
+            StringBuilder sb = new StringBuilder();
+
+            int lowestPlayerScore = 0;
+            for (Card c : playerHand)
+                if (c.value != Values.Ace)
+                    lowestPlayerScore += c.value.value;
+                else
+                    lowestPlayerScore += 1;
+
+            if (lowestPlayerScore >= 12) {
+
+                sb.append("Hand has a chance of busting if hit.");
+                sb.append("\nCards of value ").append(21 - lowestPlayerScore + 1).append(" or greater will cause a bust");
+                int amountOfBustCards = Card.countCardsInShoeOfValueEqualOrGreaterThan(21 - lowestPlayerScore + 1);
+                sb.append(".\n\nBust chance is ").append(((int) (amountOfBustCards / (deckAmount * 52d - deckIndex) * 10000)) / 100d).append("%.");
+            } else {
+                sb.append("Hand has no chance of busting.");
+            }
+            sb.append("\n\n");
+
+            int knownDealerScore = dealerHand.get(0).value.value;
+            int scoreRequiredByDealerToBeatPlayer = playerScore - knownDealerScore;
+            if (scoreRequiredByDealerToBeatPlayer < 2)
+                sb.append("Dealer has a hand that ties or beats the current player hand.");
+            else {
+                int amountOfWinningDealerCards = Card.countCardsInShoeOfValueEqualOrGreaterThan(scoreRequiredByDealerToBeatPlayer);
+                sb.append("Dealer has a ").append(((int) (amountOfWinningDealerCards / (deckAmount * 52d - deckIndex) * 10000)) / 100d);
+                sb.append("% chance having a card that will tie or beat the current player hand.");
+            }
+            sb.append("\n");
+            return sb.toString();
+        }
+        return "";
     }
 }

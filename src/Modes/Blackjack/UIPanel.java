@@ -47,6 +47,10 @@ public class UIPanel extends JLayeredPane implements GamePanel {
     private JSpinner delaySpinner;
     private JButton applyDelayButton;
 
+    private JButton tipButton;
+    private JPanel tipPanel;
+    private JTextArea tipField;
+
 
 
     private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
@@ -77,7 +81,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         pageStartPanel.add(leftPageStartPanel, BorderLayout.LINE_START);
         pageStartPanel.add(rightPageStartPanel, BorderLayout.LINE_END);
 
-        add(resultPanel, PALETTE_LAYER);
+        this.add(resultPanel, PALETTE_LAYER);
         resultPanel.setOpaque(false);
         resultPanel.setBounds(width/2, height/2, 100, 100);
 
@@ -109,6 +113,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         }
         {
         betPanel = new JPanel();
+        betPanel.setBorder(BorderFactory.createLineBorder(Palette.BORDER_COLOR));
         betPanel.setLayout(new FlowLayout());
 
         betSpinner = new JSpinner(new SpinnerNumberModel(50, 50, 5_000, 50));
@@ -123,6 +128,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         resultField.setHorizontalAlignment(SwingConstants.CENTER);
         resultField.setEditable(false);
         resultField.setVisible(false);
+        resultPanel.setVisible(false);
 
         strategyTableCheckbox = new JCheckBox("Toggle automatic play");
         strategyTableCheckbox.setBackground(Palette.HIGHLIGHT_COLOR);
@@ -153,6 +159,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
                 settingsPanel.setVisible(!settingsPanel.isVisible());
             }
         });
+        settingsButton.setFocusable(false);
 
         delaySpinner = new JSpinner(new SpinnerNumberModel(350, 0, 2_000, 10));
         applyDelayButton = new JButton("Apply");
@@ -162,12 +169,44 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         delayLabel.setForeground(Palette.DEFAULT_FONT_COLOR);
         delayLabel.setFont(new Font(fontName, Font.PLAIN, 12));
 
+        tipButton = new JButton("Tip");
+        tipButton.setHorizontalAlignment(SwingConstants.RIGHT);
+        tipButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tipField.setText(gameLogic.getTip());
+                tipPanel.setVisible(!tipPanel.isVisible());
+            }
+        });
+        tipButton.setFocusable(false);
+
+        tipPanel = new JPanel();
+        this.add(tipPanel, POPUP_LAYER);
+        tipPanel.setBounds(0, 200, 300, 300);
+        tipPanel.setBackground(Palette.HIGHLIGHT_COLOR);
+        tipPanel.setBorder(BorderFactory.createLineBorder(Palette.ALT_BACKGROUND_COLOR));
+        tipPanel.setVisible(false);
+
+        tipField = new JTextArea();
+        tipField.setFont(new Font(fontName, Font.PLAIN, 16));
+        tipField.setForeground(Palette.DEFAULT_FONT_COLOR);
+        tipField.setBackground(Palette.HIGHLIGHT_COLOR);
+        tipField.setEditable(false);
+        tipField.setLineWrap(true);
+        tipField.setWrapStyleWord(true);
+
+        JScrollPane tipScrollPane = new JScrollPane(tipField);
+        tipScrollPane.setPreferredSize(new Dimension(300 - 5, 300 - 5));
+
+        tipPanel.add(tipScrollPane);
+
         leftPageStartPanel.add(moneyField);
         leftPageStartPanel.add(betField);
         leftPageStartPanel.add(balanceField);
 
         resultPanel.add(resultField, BorderLayout.CENTER);
 
+        rightPageStartPanel.add(tipButton);
         rightPageStartPanel.add(settingsButton);
 
         settingsPanel.add(strategyTableCheckbox);
@@ -275,6 +314,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         buttonPanel.revalidate();
 
         borderPanel.add(pageStartPanel, BorderLayout.PAGE_START);
+
         backgroundMusicPlayer.play();
     }
 
@@ -297,6 +337,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
             buttonPanel.setVisible(false);
 
             resultField.setVisible(false);
+            resultPanel.setVisible(false);
             resultField.getParent().getParent().revalidate();
             resultField.getParent().revalidate();
 
@@ -314,6 +355,10 @@ public class UIPanel extends JLayeredPane implements GamePanel {
     }
 
     public void offerChoice() {
+
+        if(tipPanel.isVisible())
+            tipField.setText(gameLogic.getTip());
+
         for(Component c : buttonPanel.getComponents()) {
             c.setVisible(true);
         }
@@ -345,6 +390,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         resultField.setForeground(labelColor);
         resultField.setBorder(BorderFactory.createLineBorder(labelColor));
         resultField.setVisible(true);
+        resultPanel.setVisible(true);
         resultField.repaint();
         resultField.getParent().revalidate();
         resultField.revalidate();
@@ -381,7 +427,11 @@ public class UIPanel extends JLayeredPane implements GamePanel {
             newDeal();
         }
 
+        if(tipPanel.isVisible())
+            tipField.setText("");
+
         resultField.setVisible(true);
+        resultPanel.setVisible(true);
     }
 
     @Override

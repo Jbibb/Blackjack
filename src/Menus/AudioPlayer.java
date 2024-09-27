@@ -17,7 +17,7 @@ public class AudioPlayer {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(resourceUrl);
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException | IllegalArgumentException e) {
             System.out.println("error with sound " + soundName);
         }
     }
@@ -29,7 +29,8 @@ public class AudioPlayer {
     }
 
     public void playOnce(){
-        clip.loop(1);
+        if(clip != null)
+            clip.loop(1);
     }
 
     public void stop() {

@@ -67,9 +67,14 @@ public class PlayerListPanel extends JPanel {
         }
         jList.setModel(listModel);
         jList.setCellRenderer(cellRenderer);
+        jList.setBackground(Palette.BACKGROUND_COLOR);
+
 
         setLayout(new GridLayout(2,1));
-        add(new JScrollPane(jList));
+
+        JScrollPane scrollPane = new JScrollPane(jList);
+        scrollPane.setBorder(BorderFactory.createLineBorder(Palette.BORDER_COLOR));
+        add(scrollPane);
         jList.setFixedCellWidth(700);
 
         JPanel addPanel = new JPanel();
@@ -79,7 +84,7 @@ public class PlayerListPanel extends JPanel {
         newNameField.setPreferredSize(new Dimension(100, 50));
         addPanel.add(newNameField);
 
-        JButton addButton = new JButton("Add new player");
+        JButton addButton = new JButton("Add");
         addButton.setFocusable(false);
 
         addButton.addActionListener(new ActionListener() {
@@ -96,9 +101,29 @@ public class PlayerListPanel extends JPanel {
             }
         });
         addPanel.add(addButton);
-        add(addPanel);
 
-        setBackground(Palette.ALT_BACKGROUND_COLOR);
+        JPanel removePanel = new JPanel();
+        removePanel.setBackground(Palette.ALT_BACKGROUND_COLOR);
+
+        JButton removeButton = new JButton("Remove");
+        removeButton.setFocusable(false);
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(jList.getSelectedValue() != null) {
+                    listModel.removeElement(jList.getSelectedValue());
+                    PlayerModel.players.remove(jList.getSelectedValue());
+                    PlayerModel.savePlayers();
+                }
+            }
+        });
+        removePanel.add(removeButton);
+        setBorder(BorderFactory.createLineBorder(Palette.BORDER_COLOR));
+        JPanel containerPanel = new JPanel(new GridLayout(1, 2));
+        containerPanel.add(removePanel);
+        containerPanel.add(addPanel);
+        containerPanel.setBackground(Palette.ALT_BACKGROUND_COLOR);
+        add(containerPanel);
     }
 
     public PlayerModel getSelectedPlayer(){
