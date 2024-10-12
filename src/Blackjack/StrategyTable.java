@@ -49,7 +49,7 @@ public class StrategyTable extends JTable {
 
                 @Override
                 public void editingCanceled(ChangeEvent e) {
-                    System.out.println("cancel");
+                    ;
 
                 }
             });

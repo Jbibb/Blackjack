@@ -1,7 +1,5 @@
 package Blackjack;
 
-import Logic.CardImageNamesFetcher;
-
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;

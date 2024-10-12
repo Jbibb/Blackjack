@@ -1,4 +1,7 @@
-package Logic;
+package Blackjack;
+
+import Logic.Suits;
+import Logic.Values;
 
 import java.util.ArrayList;
 public class CardImageNamesFetcher {

@@ -77,7 +77,7 @@ public class CardPanel extends JPanel {
         resetCardBases();
     }
     public void fireCardDeal(boolean isHidden, Card card, GameLogic.CardDealtTo cardDealtTo) {
-        CardVisual cardVisual = new CardVisual(card, deckX, deckY, this, isHidden, cardDealtTo);
+        CardVisual cardVisual = new CardVisual(card, deckX, deckY, this, isHidden, cardDealtTo, waitTimeBetweenDealerActions/3);
         cardVisualsToBeDealt.add(cardVisual);
         executionQueue.add(cardDealAction);
     }

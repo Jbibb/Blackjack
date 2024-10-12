@@ -11,7 +11,7 @@ class CardVisual {
     public GameLogic.CardDealtTo dealtTo;
     public int x, y;
     public int destinationX, destinationY;
-    private int animationLength = 120;
+    private int animationLength;
     private Component parent;
     private int frameTime = 8;
 
@@ -51,13 +51,14 @@ class CardVisual {
             }
         }});
 
-    public CardVisual(Card card, int x, int y, Component parent, boolean isHidden, GameLogic.CardDealtTo dealtTo){
+    public CardVisual(Card card, int x, int y, Component parent, boolean isHidden, GameLogic.CardDealtTo dealtTo, int animationLength){
         this.card = card;
         this.x = x;
         this.y = y;
         this.parent = parent;
         this.isHidden = isHidden;
         this.dealtTo = dealtTo;
+        this.animationLength = animationLength;
     }
 
     public void moveTo(int destinationX, int destinationY){
@@ -81,5 +82,9 @@ class CardVisual {
     public void reveal(){
         isHidden = false;
         parent.repaint();
+    }
+
+    public void setAnimationLength(int animationLength) {
+        this.animationLength = animationLength;
     }
 }
