@@ -3,8 +3,6 @@ package Logic;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import Menus.Observer;
-
 public class PlayerModel implements Serializable {
 
     public static ArrayList<PlayerModel> players;
@@ -63,8 +61,10 @@ public class PlayerModel implements Serializable {
     }
 
     public void setMoney(int money) {
-        this.money = money;
-        savePlayers();
+        if(money >= 0) {
+            this.money = money;
+            savePlayers();
+        }
     }
 
     public double getChangePercentage(){

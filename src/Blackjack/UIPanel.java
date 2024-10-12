@@ -1,4 +1,4 @@
-package Modes.Blackjack;
+package Blackjack;
 
 import Menus.AudioPlayer;
 
@@ -51,12 +51,10 @@ public class UIPanel extends JLayeredPane implements GamePanel {
     private JPanel tipPanel;
     private JTextArea tipField;
 
-
-
     private AudioPlayer backgroundMusicPlayer = new AudioPlayer("Walk Through The Park - TrackTribe.wav");
 
 
-    public UIPanel(PlayerModel playerModel, StrategyTableModel strategyTableModel, int width, int height) {
+    public UIPanel(PlayerModel playerModel, StrategyTableModel strategyTableModel, int width, int height, int minimumBet, int maximumBet, int betInterval, int deckAmount) {
         this.playerModel = playerModel;
 
         borderPanel = new JPanel(new BorderLayout());
@@ -116,7 +114,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         betPanel.setBorder(BorderFactory.createLineBorder(Palette.BORDER_COLOR));
         betPanel.setLayout(new FlowLayout());
 
-        betSpinner = new JSpinner(new SpinnerNumberModel(50, 50, 5_000, 50));
+        betSpinner = new JSpinner(new SpinnerNumberModel(minimumBet, minimumBet, maximumBet, betInterval));
         betSpinner.setFocusable(false);
         betPanel.add(betSpinner);
 
@@ -163,6 +161,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
 
         delaySpinner = new JSpinner(new SpinnerNumberModel(350, 0, 2_000, 10));
         applyDelayButton = new JButton("Apply");
+        applyDelayButton.setFocusable(false);
 
         JLabel delayLabel = new JLabel("Set delay between dealer actions (ms)");
         delayLabel.setBackground(Palette.HIGHLIGHT_COLOR);
@@ -215,7 +214,7 @@ public class UIPanel extends JLayeredPane implements GamePanel {
         settingsPanel.add(applyDelayButton);
 
         CardPanel cardPanel = new CardPanel(this, (Integer) delaySpinner.getModel().getValue());
-        gameLogic = new GameLogic(cardPanel, strategyTableModel);
+        gameLogic = new GameLogic(cardPanel, strategyTableModel, deckAmount);
         addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {

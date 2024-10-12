@@ -1,4 +1,4 @@
-package Modes.Blackjack;
+package Blackjack;
 
 import Logic.CardImageNamesFetcher;
 

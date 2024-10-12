@@ -1,4 +1,4 @@
-package Modes.Blackjack;
+package Blackjack;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.HashMap;

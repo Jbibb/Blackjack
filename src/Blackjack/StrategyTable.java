@@ -1,9 +1,8 @@
-package Modes.Blackjack;
+package Blackjack;
 
 import Menus.Palette;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
@@ -16,6 +15,7 @@ import java.awt.event.ComponentListener;
 public class StrategyTable extends JTable {
     private JTable table = this;
     private StrategyTableModel model = new StrategyTableModel();
+    private int cellSide = 35;
     public StrategyTable() {
 
         setModel(model);
@@ -67,7 +67,7 @@ public class StrategyTable extends JTable {
                         JPanel panel = new JPanel(new BorderLayout());
                         panel.setBackground(Palette.HIGHLIGHT_COLOR);
                         Component component = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                        component.setPreferredSize(new Dimension(50, 50));
+                        component.setPreferredSize(new Dimension(cellSide, cellSide));
                         panel.add(component, BorderLayout.LINE_END);
                         return panel;
 
@@ -80,7 +80,7 @@ public class StrategyTable extends JTable {
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                     JLabel valueLabel = new JLabel();
-                    valueLabel.setFont(new Font("Verdana", Font.BOLD, 16));
+                    valueLabel.setFont(new Font("Verdana", Font.BOLD, 14));
                     valueLabel.setBackground((row + column) % 2 == 0 ? Palette.BACKGROUND_COLOR : Palette.ALT_BACKGROUND_COLOR);
                     valueLabel.setOpaque(true);
                     valueLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -119,16 +119,16 @@ public class StrategyTable extends JTable {
         addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
-                setRowHeight(50);
+                setRowHeight(cellSide);
                 TableColumn column = getColumnModel().getColumn(0);
-                column.setPreferredWidth(100);
-                column.setMinWidth(100);
-                column.setMaxWidth(100);
+                column.setPreferredWidth(cellSide * 2);
+                column.setMinWidth(cellSide * 2);
+                column.setMaxWidth(cellSide * 2);
                 for(int i = 1; i < getColumnModel().getColumnCount(); i++){
                     column = getColumnModel().getColumn(i);
-                    column.setPreferredWidth(50);
-                    column.setMinWidth(50);
-                    column.setMaxWidth(50);
+                    column.setPreferredWidth(cellSide);
+                    column.setMinWidth(cellSide);
+                    column.setMaxWidth(cellSide);
                 }
             }
 

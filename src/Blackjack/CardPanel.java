@@ -1,4 +1,4 @@
-package Modes.Blackjack;
+package Blackjack;
 
 import Logic.Card;
 import Menus.AudioPlayer;
@@ -6,8 +6,6 @@ import Menus.Palette;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -29,23 +27,15 @@ public class CardPanel extends JPanel {
 
         this.uiPanel = uiPanel;
         setBackground(Palette.BACKGROUND_COLOR);
-        Timer repaintTimer = new Timer(frameTime, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                repaint();
-            }
-        });
+        Timer repaintTimer = new Timer(frameTime, (e) -> repaint());
 
         repaintTimer.start();
 
         this.waitTimeBetweenDealerActions = waitTimeBetweenDealerActions;
-        executor = new Timer(waitTimeBetweenDealerActions, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Runnable runnable = executionQueue.poll();
-                if(runnable != null)
-                    runnable.run();
-            }
+        executor = new Timer(waitTimeBetweenDealerActions, (e) -> {
+            Runnable runnable = executionQueue.poll();
+            if(runnable != null)
+                runnable.run();
         });
 
         executor.start();

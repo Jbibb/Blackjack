@@ -1,4 +1,4 @@
-package Modes.Blackjack;
+package Blackjack;
 
 import java.util.ArrayList;
 import Logic.Card;
@@ -24,11 +24,12 @@ public class GameLogic {
         }
 
     }
-    private static final int deckAmount = 6;
+    private static int deckAmount;
     private int bet;
 
-    public GameLogic(CardPanel cardPanel,StrategyTableModel strategyTableModel){
+    public GameLogic(CardPanel cardPanel,StrategyTableModel strategyTableModel, int deckAmount){
         this.cardPanel = cardPanel;
+        this.deckAmount = deckAmount;
         this.deck = Card.getShoe(deckAmount);
         this.strategyTableModel = strategyTableModel;
     }
@@ -217,7 +218,7 @@ public class GameLogic {
     }
 
     public String getTip(){
-        if(playerHand.size() >= 2 && dealerHand.size() >= 2) {
+        if(playerHand.size() >= 2 && dealerHand.size() >= 2 && Card.currentShoe != null) {
             int playerScore = evaluateHand(playerHand);
             StringBuilder sb = new StringBuilder();
 

@@ -1,11 +1,13 @@
 package Modes;
 
 import Logic.PlayerModel;
-import Modes.Blackjack.UIPanel;
+import Blackjack.UIPanel;
 
-public abstract class GameMode {
+import javax.swing.*;
+
+public abstract class Game {
     protected PlayerModel playerModel;
-    public GameMode(){}
+    public Game(){}
     public void setPlayerModel(PlayerModel playerModel){
         this.playerModel = playerModel;
     }
@@ -13,4 +15,5 @@ public abstract class GameMode {
     public abstract String getName();
     public abstract String getDescription();
     public abstract UIPanel getGamePanel(int width, int height);
+    public abstract JPanel getSettingsPanel();
 }

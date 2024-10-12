@@ -1,6 +1,6 @@
 package Menus;
 
-import Modes.Blackjack.ImageHandler;
+import Blackjack.ImageHandler;
 
 import javax.sound.sampled.*;
 import java.io.IOException;

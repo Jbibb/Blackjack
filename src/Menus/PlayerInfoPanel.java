@@ -29,4 +29,8 @@ public class PlayerInfoPanel extends JPanel {
         else
             nameLabel.setText("");
     }
+
+    public PlayerModel getPlayerModel() {
+        return playerModel;
+    }
 }

@@ -1,6 +1,5 @@
-import Logic.PlayerModel;
 import Menus.MainWindow;
-import Modes.Blackjack.ImageHandler;
+import Blackjack.ImageHandler;
 
 import javax.swing.*;
 

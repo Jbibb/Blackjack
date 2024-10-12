@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class PlayerListPanel extends JPanel {
     private JTextField newNameField;
+    private JSpinner initialMoneySpinner;
     private JList jList;
     public PlayerListPanel(){
         PlayerModel.loadSavedPlayers();
@@ -80,8 +81,18 @@ public class PlayerListPanel extends JPanel {
         JPanel addPanel = new JPanel();
         addPanel.setBackground(Palette.ALT_BACKGROUND_COLOR);
 
+        JLabel spinnerLabel = new JLabel("Starting money");
+        spinnerLabel.setBackground(Palette.BACKGROUND_COLOR);
+        spinnerLabel.setForeground(Palette.DEFAULT_FONT_COLOR);
+        spinnerLabel.setFont(new Font("Verdana", Font.BOLD, 14));
+        addPanel.add(spinnerLabel);
+
+        initialMoneySpinner = new JSpinner(new SpinnerNumberModel(5_000, 0, Integer.MAX_VALUE, 1));
+        initialMoneySpinner.setBackground(Palette.BACKGROUND_COLOR);
+        addPanel.add(initialMoneySpinner);
+
         newNameField = new JTextField();
-        newNameField.setPreferredSize(new Dimension(100, 50));
+        newNameField.setPreferredSize(new Dimension(100, 25));
         addPanel.add(newNameField);
 
         JButton addButton = new JButton("Add");
@@ -93,7 +104,7 @@ public class PlayerListPanel extends JPanel {
                 Pattern pattern = Pattern.compile("^ *$");
                 Matcher matcher = pattern.matcher(newNameField.getText());
                 if(!matcher.find()) {
-                    PlayerModel playerModel = new PlayerModel(newNameField.getText(), 5_000);
+                    PlayerModel playerModel = new PlayerModel(newNameField.getText(), (Integer) initialMoneySpinner.getValue());
                     PlayerModel.players.add(playerModel);
                     listModel.addElement(playerModel);
                     PlayerModel.savePlayers();
@@ -111,8 +122,8 @@ public class PlayerListPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(jList.getSelectedValue() != null) {
-                    listModel.removeElement(jList.getSelectedValue());
                     PlayerModel.players.remove(jList.getSelectedValue());
+                    listModel.removeElement(jList.getSelectedValue());
                     PlayerModel.savePlayers();
                 }
             }

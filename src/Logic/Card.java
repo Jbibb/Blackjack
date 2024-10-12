@@ -19,7 +19,7 @@ public class Card {
         Card[] deck = new Card[52 * deckAmount];
         currentShoe = new HashMap<>();
         int i = 0;
-        for(int j = 0; j < 6; j++)
+        for(int j = 0; j < deckAmount; j++)
             for(Suits s : Suits.values())
                 for(Values v : Values.values()) {
                     deck[i++] = new Card(s, v);
